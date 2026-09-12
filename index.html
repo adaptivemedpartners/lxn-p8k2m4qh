@@ -305,6 +305,98 @@
   }
   .nested .mini strong { font-weight: 700; }
   .nested .mini span { color: var(--muted); font-weight: 500; }
+
+  /* Restaurant accordions — phone-first */
+  .acc {
+    display: grid;
+    gap: 8px;
+  }
+  details.rest {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(61, 51, 54, 0.04);
+    overflow: hidden;
+  }
+  details.rest[open] {
+    box-shadow: 0 8px 22px rgba(61, 51, 54, 0.07);
+    border-color: rgba(184, 137, 150, 0.45);
+  }
+  details.rest > summary {
+    list-style: none;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 10px;
+    align-items: center;
+    padding: 12px 14px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  details.rest > summary::-webkit-details-marker { display: none; }
+  details.rest > summary .r-name {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 19px;
+    font-weight: 550;
+    color: #4a3a3e;
+    margin: 0;
+    line-height: 1.2;
+  }
+  details.rest > summary .r-tag {
+    grid-column: 1;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.35;
+  }
+  details.rest > summary .chev {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: #f6e8ec;
+    color: var(--dusty);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+  details.rest[open] > summary .chev {
+    transform: rotate(180deg);
+    background: #ead4db;
+  }
+  .rest-body {
+    padding: 0 14px 14px;
+    border-top: 1px solid rgba(184, 160, 122, 0.22);
+  }
+  .rest-body .thumb {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    border-radius: 12px;
+    margin: 12px 0 10px;
+    border: 1px solid var(--line);
+  }
+  .rest-body .when { margin-top: 8px; }
+  .rest-body .dress { margin-top: 8px; }
+  .rest-body .es { margin-top: 6px; }
+  .menu-note {
+    background: #fff8ee;
+    border: 1px solid rgba(201, 184, 150, 0.55);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #6a5a48;
+    margin: 10px 0 0;
+  }
+  .menu-note ul {
+    margin: 6px 0 0;
+    padding-left: 18px;
+  }
+  .menu-note li { margin: 3px 0; }
   footer {
     text-align: center;
     padding: 28px 22px 10px;
@@ -413,102 +505,206 @@
     <section id="dining">
       <p class="sec-kicker">On-property dining (Marina El Cid)</p>
       <h2>Where to eat</h2>
-      <p class="lead">From Guadalupe’s restaurant information. Hours and dress can change — confirm with the lobby or butler.</p>
-      <div class="cards">
-        <article class="card">
-          <p class="label">Breakfast · Saturday dinner</p>
-          <h3>Alhambra</h3>
-          <p class="when">Breakfast only 7:00–11:30 · no reservation</p>
-          <p class="when">Dinner Saturday only — Mexican Fiesta 6:30–10:30</p>
-          <div class="chip-row">
-            <span class="chip ok">No reservation (breakfast)</span>
-            <span class="chip">Sat Mexican Fiesta</span>
+      <p class="lead">Tap a restaurant for hours, reservation, and dress code (EN + ES) from Guadalupe’s restaurant PDF. Hours can change — confirm with the lobby or butler.</p>
+
+      <div class="acc" role="list">
+
+        <details class="rest" role="listitem">
+          <summary>
+            <h3 class="r-name">Alhambra</h3>
+            <p class="r-tag">Breakfast · Sat Mexican Fiesta · 7:00–11:30</p>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="rest-body">
+            <img class="thumb" src="assets/restaurant-thumbs/alhambra.jpg" alt="Alhambra Restaurant interior" loading="lazy" width="280" height="158" />
+            <p class="label">Hours</p>
+            <p class="when"><strong>Breakfast only</strong> 7:00am – 11:30am · without reservation</p>
+            <p class="when"><strong>Dinner Saturday only</strong> — Mexican Fiesta 6:30 – 10:30pm</p>
+            <div class="chip-row">
+              <span class="chip ok">No reservation (breakfast)</span>
+              <span class="chip">Sat Mexican Fiesta</span>
+            </div>
+            <p class="es">Desayuno / Breakfast Only · Sin Reservación · Cenas sábado 6:30–10:30 · Fiesta Mexicana</p>
           </div>
-          <p class="es">Desayuno sin reservación · Cena sábado, Fiesta Mexicana</p>
-        </article>
+        </details>
 
-        <article class="card">
-          <p class="label">Mexican</p>
-          <h3>Hacienda Arrecife</h3>
-          <p class="when">Lunch only 12:00–5:00</p>
-          <div class="chip-row"><span class="chip">Casual dress code</span></div>
-          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
-          <p class="es">Comida solamente · código casual</p>
-        </article>
-
-        <article class="card">
-          <p class="label">Seafood</p>
-          <h3>La Marina</h3>
-          <p class="when">Dinner 5:00–9:00 · reservation required</p>
-          <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
-          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
-          <p class="es">Cena con reservación · código de vestimenta</p>
-        </article>
-
-        <article class="card">
-          <p class="label">Italian</p>
-          <h3>Trattoria D’ Gulio</h3>
-          <p class="when">Breakfast 7:30–11:30</p>
-          <p class="when">Dinner 5:00–9:30 · reservation required</p>
-          <div class="chip-row"><span class="chip warn">Dinner reservation required</span><span class="chip">Dress code</span></div>
-          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
-          <p class="es">Desayuno · Cena con reservación</p>
-        </article>
-
-        <article class="card">
-          <p class="label">Mediterranean</p>
-          <h3>Alcázar</h3>
-          <p class="when">Dinner 5:00–9:30 · reservation required</p>
-          <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
-          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
-          <p class="es">Cena con reservación · código de vestimenta</p>
-        </article>
-
-        <article class="card">
-          <p class="label">French · formal</p>
-          <h3>Ilé de France</h3>
-          <p class="when">Dinner 5:00–9:30 · reservation required</p>
-          <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip formal">Formal dress code</span></div>
-          <p class="dress">Formal. Men: long pants, formal collared shirt, closed shoes. Women: formal dress (or dress shorts), dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
-          <p class="es">Cena formal con reservación</p>
-        </article>
-
-        <article class="card">
-          <p class="label">Coffee center + 6 restaurants</p>
-          <h3>Mercado de Dolores</h3>
-          <p class="when">12:00–10:30 · no reservation</p>
-          <div class="chip-row"><span class="chip ok">No reservation</span><span class="chip">Dress code</span></div>
-          <div class="nested">
-            <div class="mini"><strong>Aromas Cafetería</strong> <span>· coffee</span></div>
-            <div class="mini"><strong>Maíz</strong> <span>· Mexican</span></div>
-            <div class="mini"><strong>Il Peccato</strong> <span>· Italian</span></div>
-            <div class="mini"><strong>Sea Place</strong> <span>· seafood</span></div>
-            <div class="mini"><strong>Fresko</strong> <span>· salad / healthy</span></div>
-            <div class="mini"><strong>La Crepe</strong> <span>· desserts</span></div>
-            <div class="mini"><strong>The Wok</strong> <span>· Asian</span></div>
+        <details class="rest" role="listitem">
+          <summary>
+            <h3 class="r-name">Hacienda Arrecife</h3>
+            <p class="r-tag">Mexican · Lunch 12:00–5:00</p>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="rest-body">
+            <img class="thumb" src="assets/restaurant-thumbs/hacienda-arrecife.jpg" alt="Hacienda Arrecife Mexican Restaurant" loading="lazy" width="280" height="158" />
+            <p class="label">Hours</p>
+            <p class="when"><strong>Lunch only</strong> 12:00pm – 5:00pm</p>
+            <div class="chip-row"><span class="chip">Casual dress code</span></div>
+            <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
+            <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+            <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
           </div>
-          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
-          <p class="es">Sin reservación · 12:00–10:30</p>
-        </article>
+        </details>
 
-        <article class="card">
-          <p class="label">Teppanyaki · Japanese</p>
-          <h3>KOBO</h3>
-          <p class="when">Dinner 17:00–21:30 · reservation required</p>
-          <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
-          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
-          <p class="es">Cena con reservación</p>
-        </article>
+        <details class="rest" role="listitem">
+          <summary>
+            <h3 class="r-name">La Marina</h3>
+            <p class="r-tag">Seafood · Dinner 5:00–9:00 · reservation</p>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="rest-body">
+            <img class="thumb" src="assets/restaurant-thumbs/la-marina.jpg" alt="La Marina Seafood Restaurant" loading="lazy" width="280" height="158" />
+            <p class="label">Hours &amp; reservation</p>
+            <p class="when"><strong>Dinner</strong> 5:00 – 9:00pm</p>
+            <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
+            <p class="es">Cena · Se requiere reservación</p>
+            <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
+            <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+            <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
+          </div>
+        </details>
 
-        <article class="card">
-          <p class="label">Ibero-American · open kitchen</p>
-          <h3>A’AKAT</h3>
-          <p class="when">Breakfast 7:30–11:00 · no reservation</p>
-          <p class="when">Dinner 17:00–21:30 · reservation required</p>
-          <div class="chip-row"><span class="chip ok">Breakfast — no reservation</span><span class="chip warn">Dinner reservation required</span></div>
-          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
-          <p class="es">Desayuno sin reservación · Cena con reservación</p>
-        </article>
+        <details class="rest" role="listitem">
+          <summary>
+            <h3 class="r-name">Trattoria D’ Gulio</h3>
+            <p class="r-tag">Italian · Breakfast &amp; dinner · res. for dinner</p>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="rest-body">
+            <img class="thumb" src="assets/restaurant-thumbs/trattoria.jpg" alt="Trattoria D’ Gulio Italian Restaurant" loading="lazy" width="280" height="158" />
+            <p class="label">Hours &amp; reservation</p>
+            <p class="when"><strong>Breakfast</strong> 7:30am – 11:30am</p>
+            <p class="when"><strong>Dinner</strong> 5:00 – 9:30pm · reservation required</p>
+            <div class="chip-row"><span class="chip warn">Dinner reservation required</span><span class="chip">Dress code</span></div>
+            <p class="es">Desayuno 7:30–11:30 · Cena 5–9:30 · Se requiere reservación para cena</p>
+            <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
+            <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+            <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
+          </div>
+        </details>
+
+        <details class="rest" role="listitem">
+          <summary>
+            <h3 class="r-name">Alcázar</h3>
+            <p class="r-tag">Mediterranean · Dinner 5:00–9:30 · reservation</p>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="rest-body">
+            <img class="thumb" src="assets/restaurant-thumbs/alcazar.jpg" alt="Alcázar Mediterranean Restaurant" loading="lazy" width="280" height="158" />
+            <p class="label">Hours &amp; reservation</p>
+            <p class="when"><strong>Dinner</strong> 5:00 – 9:30pm</p>
+            <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
+            <p class="es">Cena · Se requiere reservación</p>
+            <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
+            <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+            <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
+          </div>
+        </details>
+
+        <details class="rest" role="listitem">
+          <summary>
+            <h3 class="r-name">Ilé de France</h3>
+            <p class="r-tag">French · Formal · Dinner 5:00–9:30</p>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="rest-body">
+            <img class="thumb" src="assets/restaurant-thumbs/ile-de-france.jpg" alt="Ilé de France French Restaurant" loading="lazy" width="280" height="158" />
+            <p class="label">Hours &amp; reservation</p>
+            <p class="when"><strong>Dinner</strong> 5:00 – 9:30pm</p>
+            <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip formal">Formal dress code</span></div>
+            <p class="es">Cena formal · Se requiere reservación</p>
+            <p class="label" style="margin-top:10px">Dress code / Código de vestimenta — Formal</p>
+            <p class="dress"><strong>EN</strong> — Men: long pants, formal collared / polo-style button shirt, closed shoes. Women: formal dress (or dress shorts), dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+            <p class="es"><strong>ES</strong> — Hombres: camisa con cuello y botones tipo polo y zapatos cerrados. Mujeres: vestido formal o shorts de vestir, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
+          </div>
+        </details>
+
+        <details class="rest" role="listitem">
+          <summary>
+            <h3 class="r-name">Mercado de Dolores</h3>
+            <p class="r-tag">Coffee + 6 spots · 12:00–10:30 · no reservation</p>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="rest-body">
+            <img class="thumb" src="assets/restaurant-thumbs/mercado.jpg" alt="Mercado de Dolores" loading="lazy" width="280" height="158" />
+            <p class="label">Hours &amp; reservation</p>
+            <p class="when"><strong>12:00pm – 10:30pm</strong> · reservation not required</p>
+            <div class="chip-row"><span class="chip ok">No reservation</span><span class="chip">Dress code</span></div>
+            <p class="label" style="margin-top:10px">Inside the mercado</p>
+            <div class="nested">
+              <div class="mini"><strong>Aromas Cafetería</strong> <span>· coffee</span></div>
+              <div class="mini"><strong>Maíz</strong> <span>· Mexican</span></div>
+              <div class="mini"><strong>Il Peccato</strong> <span>· Italian</span></div>
+              <div class="mini"><strong>Sea Place</strong> <span>· seafood</span></div>
+              <div class="mini"><strong>Fresko</strong> <span>· salad / healthy</span></div>
+              <div class="mini"><strong>La Crepe</strong> <span>· desserts</span></div>
+              <div class="mini"><strong>The Wok</strong> <span>· Asian</span></div>
+            </div>
+            <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
+            <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+            <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
+          </div>
+        </details>
+
+        <details class="rest" role="listitem">
+          <summary>
+            <h3 class="r-name">KOBO</h3>
+            <p class="r-tag">Teppanyaki · Dinner 17:00–21:30 · reservation</p>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="rest-body">
+            <img class="thumb" src="assets/restaurant-thumbs/kobo.jpg" alt="KOBO Japanese / Teppanyaki" loading="lazy" width="280" height="158" />
+            <p class="label">Hours &amp; reservation</p>
+            <p class="when"><strong>Dinner</strong> 17:00 – 21:30</p>
+            <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
+            <p class="es">Cena · Se requiere reservación · Cocina japonesa / teppanyaki</p>
+            <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
+            <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+            <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
+          </div>
+        </details>
+
+        <details class="rest" role="listitem">
+          <summary>
+            <h3 class="r-name">A’AKAT</h3>
+            <p class="r-tag">Ibero-American · Breakfast &amp; dinner</p>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="rest-body">
+            <img class="thumb" src="assets/restaurant-thumbs/aakat.jpg" alt="A’AKAT open kitchen restaurant" loading="lazy" width="280" height="158" />
+            <p class="label">Hours &amp; reservation</p>
+            <p class="when"><strong>Breakfast</strong> 7:30am – 11:00am · without reservation</p>
+            <p class="when"><strong>Dinner</strong> 17:00 – 21:30 · reservation required</p>
+            <div class="chip-row"><span class="chip ok">Breakfast — no reservation</span><span class="chip warn">Dinner reservation required</span></div>
+            <p class="es">Desayuno sin reservación · Cena con reservación · Cocina iberoamericana · open kitchen</p>
+            <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
+            <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+            <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
+          </div>
+        </details>
+
+        <details class="rest" role="listitem">
+          <summary>
+            <h3 class="r-name">Wedding dinner menu</h3>
+            <p class="r-tag">From Guadalupe’s Wedding Menu (Eng.) PDF</p>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="rest-body">
+            <p class="when" style="margin-top:10px">This is the <strong>ceremony dinner selection guide</strong> (not the à-la-carte restaurant menus). Final choices go on the Wedding Form — we are not listing chosen dishes here yet.</p>
+            <div class="menu-note">
+              <strong>Extras from the Wedding Menu PDF</strong>
+              <ul>
+                <li>Set menu for all guests — one option per course (starter, main, dessert).</li>
+                <li>If two mains are chosen, they are served alternating (guests get one at random).</li>
+                <li>Events over 40 guests may select up to three options of a dish.</li>
+                <li>Contract confirms whether the menu is three or four courses.</li>
+                <li>Dietary needs (vegetarian, vegan, gluten-free, allergies): tell the resort in advance — special meals with prior notice.</li>
+                <li>PDF course lists include salads, soups &amp; creams, main dishes, and desserts — we’ll share the final selected set once locked on the Wedding Form.</li>
+              </ul>
+            </div>
+            <p class="es">Menú de cena de boda (guía de selección) · Selecciones finales en el Wedding Form.</p>
+          </div>
+        </details>
+
       </div>
 
       <p class="sec-kicker" style="margin-top:20px">A few bars</p>
