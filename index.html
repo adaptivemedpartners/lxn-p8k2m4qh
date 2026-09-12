@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="theme-color" content="#f3e4e8" />
+<meta name="mobile-web-app-capable" content="yes" />
+<title>December 18</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blush: #f6e8ec;
+    --rose: #d4b0ba;
+    --dusty: #b88996;
+    --ink: #3d3336;
+    --muted: #7a6a6e;
+    --cream: #fbf7f2;
+    --sand: #f3ebe3;
+    --champagne: #c9b896;
+    --gold: #b8a07a;
+    --ocean: #6fa8b2;
+    --ocean-deep: #3d7a84;
+    --card: #fffdfb;
+    --line: rgba(184, 160, 122, 0.35);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: "Nunito", system-ui, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(ellipse 90% 40% at 50% 0%, #f8eef1 0%, transparent 55%),
+      linear-gradient(180deg, #fbf7f2 0%, #f6e8ec 42%, #eef4f5 100%);
+    min-height: 100vh;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 0 0 max(36px, env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, #fffaf7 0%, #fbf6f3 28%, #f7eef1 70%, #f3f7f8 100%);
+    box-shadow: 0 0 0 1px rgba(201, 184, 150, 0.18), 0 18px 50px rgba(61, 51, 54, 0.08);
+    min-height: 100vh;
+  }
+  .hero {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    height: min(62vh, 420px);
+    min-height: 300px;
+  }
+  .hero img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 28%;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(61,51,54,0.08) 0%, rgba(61,51,54,0.05) 42%, rgba(61,51,54,0.55) 100%);
+  }
+  .hero-copy {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    z-index: 1;
+    padding: 28px 22px 22px;
+    text-align: center;
+    color: #fffaf7;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #f3e6c8;
+    margin: 0 0 6px;
+  }
+  .names {
+    font-family: "Great Vibes", cursive;
+    font-size: 46px;
+    line-height: 1.05;
+    margin: 0 0 6px;
+    font-weight: 400;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.28);
+  }
+  .hero-sub {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 18px;
+    font-style: italic;
+    margin: 0;
+    letter-spacing: 0.04em;
+    color: #fff6ee;
+  }
+  .rule {
+    width: 72px;
+    height: 1px;
+    margin: 10px auto 8px;
+    background: linear-gradient(90deg, transparent, #e8d5b0, transparent);
+  }
+  nav {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    flex: 0 0 auto;
+    text-decoration: none;
+    color: var(--dusty);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 13px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  section {
+    padding: 18px 18px 6px;
+  }
+  h2 {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 26px;
+    font-weight: 500;
+    margin: 0 0 4px;
+    color: #4a3a3e;
+    letter-spacing: 0.01em;
+  }
+  .sec-kicker {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin: 0 0 2px;
+  }
+  .lead {
+    color: var(--muted);
+    font-size: 14.5px;
+    margin: 0 0 14px;
+  }
+  .cards {
+    display: grid;
+    gap: 10px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 15px 13px;
+    box-shadow: 0 6px 18px rgba(61, 51, 54, 0.04);
+  }
+  .card h3 {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 20px;
+    font-weight: 550;
+    margin: 0 0 4px;
+    color: #4a3a3e;
+  }
+  .label {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dusty);
+    font-weight: 700;
+    margin: 0 0 3px;
+  }
+  .card p { margin: 0; font-size: 14.5px; color: var(--ink); }
+  .card .hint { color: var(--muted); font-size: 13.5px; margin-top: 4px; }
+  .pin-card {
+    background: linear-gradient(165deg, #fff 0%, #f7eef1 100%);
+  }
+  .map-frame {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    height: 240px;
+    background: #e8eef0;
+    box-shadow: 0 6px 18px rgba(61, 51, 54, 0.05);
+  }
+  .map-frame iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  .btn {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    background: linear-gradient(180deg, #6fa8b2 0%, #3d7a84 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14.5px;
+    padding: 13px 16px;
+    border-radius: 999px;
+    margin: 12px 0 6px;
+    box-shadow: 0 8px 18px rgba(61, 122, 132, 0.28);
+  }
+  .addr {
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+    margin: 8px 0 0;
+  }
+  .prop-wrap {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .prop-wrap img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .note {
+    background: #fff8ee;
+    border: 1px solid rgba(201, 184, 150, 0.55);
+    border-radius: 14px;
+    padding: 11px 13px;
+    font-size: 13px;
+    color: #6a5a48;
+    margin: 10px 0 0;
+  }
+  .dine-meta {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 2px 0 0;
+  }
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .chip {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--ocean-deep);
+    background: #eef6f7;
+    border-radius: 999px;
+    padding: 4px 9px;
+  }
+  .bars {
+    display: grid;
+    gap: 8px;
+  }
+  .bar {
+    background: #fff;
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  footer {
+    text-align: center;
+    padding: 28px 22px 10px;
+    color: var(--muted);
+    font-size: 13.5px;
+  }
+  footer .sig {
+    font-family: "Great Vibes", cursive;
+    font-size: 28px;
+    color: #9a6f7c;
+    margin: 0 0 4px;
+  }
+  footer .tiny { font-size: 12px; color: #9a8b8e; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <img src="assets/hero-vow-renewal.jpg" alt="Erica and Mike Freeman with family on the beach" />
+      <div class="hero-copy">
+        <p class="eyebrow">A small weekend by the sea</p>
+        <h1 class="names">Erica &amp; Mike</h1>
+        <div class="rule"></div>
+        <p class="hero-sub">vow renewal · December 18, 2026</p>
+      </div>
+    </header>
+
+    <nav aria-label="On this page">
+      <a href="#basics">Basics</a>
+      <a href="#where">Where we are</a>
+      <a href="#property">Property map</a>
+      <a href="#dining">Dining</a>
+    </nav>
+
+    <section id="basics">
+      <p class="sec-kicker">Weekend basics</p>
+      <h2>What to know</h2>
+      <p class="lead">A quiet, pretty day with about 26 of us. Soft pinks and champagne — not a loud party look.</p>
+      <div class="cards">
+        <article class="card">
+          <p class="label">Date</p>
+          <h3>Friday, December 18, 2026</h3>
+        </article>
+        <article class="card">
+          <p class="label">Resort</p>
+          <h3>Marina El Cid Spa &amp; Beach Resort</h3>
+          <p class="hint">Puerto Morelos · Cancún area</p>
+        </article>
+        <article class="card">
+          <p class="label">Ceremony</p>
+          <h3>Ocean Pier Pavilion</h3>
+          <p class="hint">The palapa at the end of the private jetty</p>
+        </article>
+        <article class="card">
+          <p class="label">Reception</p>
+          <h3>On the beach</h3>
+          <p class="hint">Exact stretch is chosen once we are on property</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="where">
+      <p class="sec-kicker">Where we are</p>
+      <h2>Find the resort</h2>
+      <p class="lead">Pin this place for taxis, rides, and maps — Hotel Marina El Cid Spa &amp; Beach Resort in Puerto Morelos.</p>
+      <article class="card pin-card" style="margin-bottom:12px">
+        <p class="label">Map pin</p>
+        <h3>Hotel Marina El Cid Spa &amp; Beach Resort</h3>
+        <p>Blvd. El Cid Unidad 15<br />Puerto Morelos, QR 77580<br />Mexico</p>
+        <p class="hint">20.8344639, −86.8895111</p>
+      </article>
+      <div class="map-frame">
+        <iframe
+          title="Hotel Marina El Cid Spa &amp; Beach Resort, Puerto Morelos"
+          src="https://maps.google.com/maps?q=20.8344639,-86.8895111&amp;z=16&amp;output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen></iframe>
+      </div>
+      <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel+Marina+El+Cid+Spa+%26+Beach+Resort,+Puerto+Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+      <p class="addr">Hotel Marina El Cid Spa &amp; Beach Resort · Puerto Morelos</p>
+    </section>
+
+    <section id="property">
+      <p class="sec-kicker">On the grounds</p>
+      <h2>Property map</h2>
+      <p class="lead">A layout to help you find the lobby, pools, restaurants, and beach once you are here.</p>
+      <div class="prop-wrap">
+        <img src="assets/property-map-unofficial.jpg" alt="Unofficial Marina El Cid property layout map for orientation" />
+      </div>
+      <p class="note">Unofficial — for orientation only, until we have Guadalupe’s official resort map. We’ll swap this in when that file arrives.</p>
+    </section>
+
+    <section id="dining">
+      <p class="sec-kicker">On-property dining (Marina El Cid)</p>
+      <h2>Where to eat</h2>
+      <p class="lead">Official Hotel Marina El Cid restaurants only. Hours can shift — ask the lobby or your butler.</p>
+      <p class="note">Guadalupe’s personal dining list will replace or merge here if we get it later. Nothing off-property is listed.</p>
+      <div class="cards" style="margin-top:12px">
+        <article class="card">
+          <h3>La Alhambra</h3>
+          <p class="dine-meta">International buffet · breakfast, lunch &amp; dinner · near the lobby</p>
+        </article>
+        <article class="card">
+          <h3>El Alcázar</h3>
+          <p class="dine-meta">Asian–Mediterranean · dinner · reservations · near the lobby</p>
+        </article>
+        <article class="card">
+          <h3>Hacienda Arrecife</h3>
+          <p class="dine-meta">Mexican · dinner reservations · near the main pool</p>
+        </article>
+        <article class="card">
+          <h3>La Marina</h3>
+          <p class="dine-meta">Seafood · marina views · dinner reservations</p>
+        </article>
+        <article class="card">
+          <h3>Trattoria Di Gulio</h3>
+          <p class="dine-meta">Italian · pasta &amp; pizza · dinner reservations</p>
+        </article>
+      </div>
+
+      <p class="sec-kicker" style="margin-top:20px">A few bars</p>
+      <h2 style="font-size:22px">If you want a drink</h2>
+      <div class="bars" style="margin-top:10px">
+        <div class="bar">Scaramanga Beach Bar</div>
+        <div class="bar">Lobby Bar</div>
+        <div class="bar">Congo Bar</div>
+        <div class="bar">Swim-Up Bar</div>
+        <div class="bar">Jacuzzi Bar – Silent Zone</div>
+      </div>
+    </section>
+
+    <footer>
+      <p class="sig">See you there</p>
+      <p>Erica &amp; Mike Freeman<br />December 18, 2026 · Puerto Morelos</p>
+      <p class="tiny">A private note for our people — not a public invitation page.</p>
+    </footer>
+  </div>
+</body>
+</html>
