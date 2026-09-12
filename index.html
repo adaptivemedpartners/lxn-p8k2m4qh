@@ -523,7 +523,9 @@
   .prop-map.is-zoomed .hotspot {
     /* zoom handled via transform on .prop-map-stage */
   }
-  .map-zoom-bar .btn-ghost { font-size: 12.5px; }
+  .map-zoom-bar { margin: 8px 0 0; display: flex; justify-content: flex-end; }
+  .map-zoom-out-btn { width: auto !important; min-width: 0; padding: 8px 14px; font-size: 13px; }
+  .map-zoom-out-btn[hidden] { display: none !important; }
   .prop-map-stage {
     position: relative;
     transform-origin: center center;
@@ -810,8 +812,8 @@
         </div>
       </div>
 
-      <p class="map-zoom-bar" style="margin:8px 0 0;display:flex;justify-content:flex-end">
-        <button type="button" class="btn-ghost" id="map-zoom-out" hidden>Zoom out · full map</button>
+      <p class="map-zoom-bar">
+        <button type="button" class="btn btn-sm map-zoom-out-btn" id="map-zoom-out" hidden>Zoom out · full map</button>
       </p>
       <div class="pin-sheet" id="pin-sheet" hidden>
         <p class="pin-name" id="pin-name"></p>
@@ -1369,7 +1371,7 @@
       return;
     }
     // Mild zoom toward the pin — keep campus context, not a tight crop
-    var scale = 1.28;
+    var scale = 1.12;
     stageEl.style.transformOrigin = place.x + "% " + place.y + "%";
     stageEl.style.transform = "scale(" + scale + ")";
     mapEl.classList.add("is-zoomed");
