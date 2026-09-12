@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
   :root {
     --blush: #f6e8ec;
@@ -397,8 +398,171 @@
     padding-left: 18px;
   }
   .menu-note li { margin: 3px 0; }
-  footer {
+
+  /* Interactive property map + walk actions */
+  .prop-map {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: #e8eef0;
+  }
+  .prop-map img {
+    display: block;
+    width: 100%;
+    height: auto;
+    vertical-align: middle;
+  }
+  .hotspot {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    margin: 0;
+    padding: 0;
+    border: 2px solid #fff;
+    border-radius: 999px;
+    background: #9a6f7c;
+    color: #fff;
+    font-family: "Nunito", system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1;
+    box-shadow: 0 3px 8px rgba(61, 51, 54, 0.28);
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    z-index: 2;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hotspot.bar-pin {
+    background: #3d7a84;
+  }
+  .hotspot:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .hotspot.is-on {
+    width: 32px;
+    height: 32px;
+    background: #b88996;
+    box-shadow: 0 0 0 4px rgba(184, 137, 150, 0.35), 0 6px 14px rgba(61, 51, 54, 0.28);
+    z-index: 3;
+  }
+  .hotspot.bar-pin.is-on {
+    background: #2f6b74;
+    box-shadow: 0 0 0 4px rgba(111, 168, 178, 0.4), 0 6px 14px rgba(61, 51, 54, 0.28);
+  }
+  .prop-wrap { overflow: visible; border: none; background: transparent; }
+  .picks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 12px;
+  }
+  .pick {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--dusty);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pick.is-on {
+    background: linear-gradient(180deg, #6fa8b2 0%, #3d7a84 100%);
+    color: #fff;
+    border-color: transparent;
+  }
+  .pick.drink.is-on {
+    background: linear-gradient(180deg, #c9a4ae 0%, #9a6f7c 100%);
+  }
+  .pin-sheet {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 13px 11px;
+    margin: 10px 0 0;
+    box-shadow: 0 6px 18px rgba(61, 51, 54, 0.05);
+  }
+  .pin-sheet[hidden] { display: none; }
+  .pin-sheet .pin-name {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 20px;
+    font-weight: 550;
+    margin: 0 0 2px;
+    color: #4a3a3e;
+  }
+  .pin-sheet .pin-where {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .pin-sheet .pin-dir {
+    margin: 8px 0 0;
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+  .walk-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0 2px;
+    align-items: center;
+  }
+  .btn.btn-sm,
+  a.btn.btn-sm {
+    display: inline-block;
+    width: auto;
+    margin: 0;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    box-shadow: 0 6px 14px rgba(61, 122, 132, 0.22);
+  }
+  .btn-ghost {
+    appearance: none;
+    display: inline-block;
     text-align: center;
+    text-decoration: none;
+    background: #fff;
+    color: var(--ocean-deep);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 9px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(61, 122, 132, 0.28);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .loc-strip {
+    margin-top: 12px;
+  }
+  .loc-strip .btn { margin-top: 0; }
+  #geo-status { margin: 8px 0 0; }
+  .live-map {
+    height: 240px;
+    margin-top: 10px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: #e8eef0;
+    box-shadow: 0 6px 18px rgba(61, 51, 54, 0.05);
+  }
+  .live-map[hidden] { display: none; }
+  .bar {
+    display: grid;
+    gap: 4px;
+  }
+  .bar .bar-name { font-weight: 600; }
+
+  footer {
+
     padding: 28px 22px 10px;
     color: var(--muted);
     font-size: 13.5px;
@@ -495,11 +659,37 @@
     <section id="property">
       <p class="sec-kicker">On the grounds</p>
       <h2>Property map</h2>
-      <p class="lead">A layout to help you find the lobby, pools, restaurants, and beach once you are here.</p>
+      <p class="lead">Pick a restaurant or bar — we’ll drop that pin on the layout. Tap <strong>Walk in Maps</strong> for Google walking directions (Live View on phones). Turn on location so Walk starts from where you are.</p>
+
+      <p class="label" style="margin-bottom:6px">Eat</p>
+      <div class="picks" id="picks-eat" role="list"></div>
+      <p class="label" style="margin:10px 0 6px">Drink</p>
+      <div class="picks" id="picks-drink" role="list"></div>
+
       <div class="prop-wrap">
-        <img src="assets/property-map-unofficial.jpg" alt="Unofficial Marina El Cid property layout map for orientation" />
+        <div class="prop-map" id="prop-map">
+          <img src="assets/property-map-unofficial.jpg?v=2" alt="Unofficial Marina El Cid property layout — tap a pin for a restaurant or bar" width="1274" height="983" />
+        </div>
       </div>
-      <p class="note">Unofficial — for orientation only, until we have Guadalupe’s official resort map. We’ll swap this in when that file arrives.</p>
+
+      <div class="pin-sheet" id="pin-sheet" hidden>
+        <p class="pin-name" id="pin-name"></p>
+        <p class="pin-where" id="pin-where"></p>
+        <p class="pin-dir" id="pin-dir"></p>
+        <div class="walk-row">
+          <a class="btn btn-sm" id="pin-walk" href="#" target="_blank" rel="noopener noreferrer">Walk in Maps</a>
+          <a class="btn-ghost" id="pin-open" href="#" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+          <a class="btn-ghost" id="pin-details" href="#dining">Details</a>
+        </div>
+      </div>
+
+      <p class="note">Unofficial layout — pins are approximate (purple letters on the drawing). Ilé de France, Mercado de Dolores, KOBO, and A’AKAT are not on this older map (likely Ventus) but still have Walk buttons under Dining. Walk opens Google Maps for live walking / Live View — we do not invent GPS coordinates for restaurants.</p>
+
+      <div class="loc-strip">
+        <button type="button" class="btn" id="btn-geo">Show my location</button>
+        <p class="dine-meta" id="geo-status">Location is optional. If you allow it, Walk starts from your phone and a blue pin appears on the little live map.</p>
+      </div>
+      <div class="live-map" id="live-map" hidden role="img" aria-label="Live map of the resort and your location"></div>
     </section>
 
     <section id="dining">
@@ -509,7 +699,7 @@
 
       <div class="acc" role="list">
 
-        <details class="rest" role="listitem">
+        <details class="rest" id="rest-alhambra" role="listitem">
           <summary>
             <h3 class="r-name">Alhambra</h3>
             <p class="r-tag">Breakfast · Sat Mexican Fiesta · 7:00–11:30</p>
@@ -517,6 +707,12 @@
           </summary>
           <div class="rest-body">
             <img class="thumb" src="assets/restaurant-thumbs/alhambra.jpg" alt="Alhambra Restaurant interior" loading="lazy" width="280" height="158" />
+            <div class="walk-row">
+              <a class="btn btn-sm js-walk" data-query="Alhambra Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Alhambra%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+              <a class="btn-ghost js-openmaps" data-query="Alhambra Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Alhambra%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+              <button type="button" class="btn-ghost js-show-on-map" data-place="alhambra">Show on map</button>
+            </div>
+
             <p class="label">Hours</p>
             <p class="when"><strong>Breakfast only</strong> 7:00am – 11:30am · without reservation</p>
             <p class="when"><strong>Dinner Saturday only</strong> — Mexican Fiesta 6:30 – 10:30pm</p>
@@ -528,7 +724,7 @@
           </div>
         </details>
 
-        <details class="rest" role="listitem">
+        <details class="rest" id="rest-hacienda" role="listitem">
           <summary>
             <h3 class="r-name">Hacienda Arrecife</h3>
             <p class="r-tag">Mexican · Lunch 12:00–5:00</p>
@@ -536,6 +732,12 @@
           </summary>
           <div class="rest-body">
             <img class="thumb" src="assets/restaurant-thumbs/hacienda-arrecife.jpg" alt="Hacienda Arrecife Mexican Restaurant" loading="lazy" width="280" height="158" />
+            <div class="walk-row">
+              <a class="btn btn-sm js-walk" data-query="Hacienda Arrecife, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Hacienda%20Arrecife%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+              <a class="btn-ghost js-openmaps" data-query="Hacienda Arrecife, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Hacienda%20Arrecife%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+              <button type="button" class="btn-ghost js-show-on-map" data-place="hacienda">Show on map</button>
+            </div>
+
             <p class="label">Hours</p>
             <p class="when"><strong>Lunch only</strong> 12:00pm – 5:00pm</p>
             <div class="chip-row"><span class="chip">Casual dress code</span></div>
@@ -545,7 +747,7 @@
           </div>
         </details>
 
-        <details class="rest" role="listitem">
+        <details class="rest" id="rest-marina" role="listitem">
           <summary>
             <h3 class="r-name">La Marina</h3>
             <p class="r-tag">Seafood · Dinner 5:00–9:00 · reservation</p>
@@ -553,6 +755,12 @@
           </summary>
           <div class="rest-body">
             <img class="thumb" src="assets/restaurant-thumbs/la-marina.jpg" alt="La Marina Seafood Restaurant" loading="lazy" width="280" height="158" />
+            <div class="walk-row">
+              <a class="btn btn-sm js-walk" data-query="La Marina Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=La%20Marina%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+              <a class="btn-ghost js-openmaps" data-query="La Marina Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=La%20Marina%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+              <button type="button" class="btn-ghost js-show-on-map" data-place="marina">Show on map</button>
+            </div>
+
             <p class="label">Hours &amp; reservation</p>
             <p class="when"><strong>Dinner</strong> 5:00 – 9:00pm</p>
             <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
@@ -563,7 +771,7 @@
           </div>
         </details>
 
-        <details class="rest" role="listitem">
+        <details class="rest" id="rest-trattoria" role="listitem">
           <summary>
             <h3 class="r-name">Trattoria D’ Gulio</h3>
             <p class="r-tag">Italian · Breakfast &amp; dinner · res. for dinner</p>
@@ -571,6 +779,12 @@
           </summary>
           <div class="rest-body">
             <img class="thumb" src="assets/restaurant-thumbs/trattoria.jpg" alt="Trattoria D’ Gulio Italian Restaurant" loading="lazy" width="280" height="158" />
+            <div class="walk-row">
+              <a class="btn btn-sm js-walk" data-query="Trattoria D' Gulio, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Trattoria%20D%27%20Gulio%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+              <a class="btn-ghost js-openmaps" data-query="Trattoria D' Gulio, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Trattoria%20D%27%20Gulio%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+              <button type="button" class="btn-ghost js-show-on-map" data-place="trattoria">Show on map</button>
+            </div>
+
             <p class="label">Hours &amp; reservation</p>
             <p class="when"><strong>Breakfast</strong> 7:30am – 11:30am</p>
             <p class="when"><strong>Dinner</strong> 5:00 – 9:30pm · reservation required</p>
@@ -582,7 +796,7 @@
           </div>
         </details>
 
-        <details class="rest" role="listitem">
+        <details class="rest" id="rest-alcazar" role="listitem">
           <summary>
             <h3 class="r-name">Alcázar</h3>
             <p class="r-tag">Mediterranean · Dinner 5:00–9:30 · reservation</p>
@@ -590,6 +804,12 @@
           </summary>
           <div class="rest-body">
             <img class="thumb" src="assets/restaurant-thumbs/alcazar.jpg" alt="Alcázar Mediterranean Restaurant" loading="lazy" width="280" height="158" />
+            <div class="walk-row">
+              <a class="btn btn-sm js-walk" data-query="Alcázar Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Alc%C3%A1zar%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+              <a class="btn-ghost js-openmaps" data-query="Alcázar Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Alc%C3%A1zar%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+              <button type="button" class="btn-ghost js-show-on-map" data-place="alcazar">Show on map</button>
+            </div>
+
             <p class="label">Hours &amp; reservation</p>
             <p class="when"><strong>Dinner</strong> 5:00 – 9:30pm</p>
             <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
@@ -600,7 +820,7 @@
           </div>
         </details>
 
-        <details class="rest" role="listitem">
+        <details class="rest" id="rest-ile" role="listitem">
           <summary>
             <h3 class="r-name">Ilé de France</h3>
             <p class="r-tag">French · Formal · Dinner 5:00–9:30</p>
@@ -608,6 +828,11 @@
           </summary>
           <div class="rest-body">
             <img class="thumb" src="assets/restaurant-thumbs/ile-de-france.jpg" alt="Ilé de France French Restaurant" loading="lazy" width="280" height="158" />
+            <div class="walk-row">
+              <a class="btn btn-sm js-walk" data-query="Ilé de France Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Il%C3%A9%20de%20France%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+              <a class="btn-ghost js-openmaps" data-query="Ilé de France Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Il%C3%A9%20de%20France%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            </div>
+
             <p class="label">Hours &amp; reservation</p>
             <p class="when"><strong>Dinner</strong> 5:00 – 9:30pm</p>
             <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip formal">Formal dress code</span></div>
@@ -618,7 +843,7 @@
           </div>
         </details>
 
-        <details class="rest" role="listitem">
+        <details class="rest" id="rest-mercado" role="listitem">
           <summary>
             <h3 class="r-name">Mercado de Dolores</h3>
             <p class="r-tag">Coffee + 6 spots · 12:00–10:30 · no reservation</p>
@@ -626,6 +851,11 @@
           </summary>
           <div class="rest-body">
             <img class="thumb" src="assets/restaurant-thumbs/mercado.jpg" alt="Mercado de Dolores" loading="lazy" width="280" height="158" />
+            <div class="walk-row">
+              <a class="btn btn-sm js-walk" data-query="Mercado de Dolores, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Mercado%20de%20Dolores%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+              <a class="btn-ghost js-openmaps" data-query="Mercado de Dolores, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Mercado%20de%20Dolores%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            </div>
+
             <p class="label">Hours &amp; reservation</p>
             <p class="when"><strong>12:00pm – 10:30pm</strong> · reservation not required</p>
             <div class="chip-row"><span class="chip ok">No reservation</span><span class="chip">Dress code</span></div>
@@ -645,7 +875,7 @@
           </div>
         </details>
 
-        <details class="rest" role="listitem">
+        <details class="rest" id="rest-kobo" role="listitem">
           <summary>
             <h3 class="r-name">KOBO</h3>
             <p class="r-tag">Teppanyaki · Dinner 17:00–21:30 · reservation</p>
@@ -653,6 +883,11 @@
           </summary>
           <div class="rest-body">
             <img class="thumb" src="assets/restaurant-thumbs/kobo.jpg" alt="KOBO Japanese / Teppanyaki" loading="lazy" width="280" height="158" />
+            <div class="walk-row">
+              <a class="btn btn-sm js-walk" data-query="KOBO Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=KOBO%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+              <a class="btn-ghost js-openmaps" data-query="KOBO Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=KOBO%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            </div>
+
             <p class="label">Hours &amp; reservation</p>
             <p class="when"><strong>Dinner</strong> 17:00 – 21:30</p>
             <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
@@ -663,7 +898,7 @@
           </div>
         </details>
 
-        <details class="rest" role="listitem">
+        <details class="rest" id="rest-aakat" role="listitem">
           <summary>
             <h3 class="r-name">A’AKAT</h3>
             <p class="r-tag">Ibero-American · Breakfast &amp; dinner</p>
@@ -671,6 +906,11 @@
           </summary>
           <div class="rest-body">
             <img class="thumb" src="assets/restaurant-thumbs/aakat.jpg" alt="A’AKAT open kitchen restaurant" loading="lazy" width="280" height="158" />
+            <div class="walk-row">
+              <a class="btn btn-sm js-walk" data-query="A'AKAT Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=A%27AKAT%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+              <a class="btn-ghost js-openmaps" data-query="A'AKAT Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=A%27AKAT%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            </div>
+
             <p class="label">Hours &amp; reservation</p>
             <p class="when"><strong>Breakfast</strong> 7:30am – 11:00am · without reservation</p>
             <p class="when"><strong>Dinner</strong> 17:00 – 21:30 · reservation required</p>
@@ -710,11 +950,46 @@
       <p class="sec-kicker" style="margin-top:20px">A few bars</p>
       <h2 style="font-size:22px">If you want a drink</h2>
       <div class="bars" style="margin-top:10px">
-        <div class="bar">Scaramanga Beach Bar</div>
-        <div class="bar">Lobby Bar</div>
-        <div class="bar">Congo Bar</div>
-        <div class="bar">Swim-Up Bar</div>
-        <div class="bar">Jacuzzi Bar – Silent Zone</div>
+        <div class="bar">
+          <div class="bar-name">Scaramanga Beach Bar</div>
+          <div class="walk-row">
+            <a class="btn btn-sm js-walk" data-query="Scaramanga Beach Bar, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Scaramanga%20Beach%20Bar%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+            <a class="btn-ghost js-openmaps" data-query="Scaramanga Beach Bar, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Scaramanga%20Beach%20Bar%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            <button type="button" class="btn-ghost js-show-on-map" data-place="scaramanga">Show on map</button>
+          </div>
+        </div>
+        <div class="bar">
+          <div class="bar-name">Lobby Bar</div>
+          <div class="walk-row">
+            <a class="btn btn-sm js-walk" data-query="Lobby Bar, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Lobby%20Bar%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+            <a class="btn-ghost js-openmaps" data-query="Lobby Bar, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Lobby%20Bar%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            <button type="button" class="btn-ghost js-show-on-map" data-place="lobbybar">Show on map</button>
+          </div>
+        </div>
+        <div class="bar">
+          <div class="bar-name">Congo Bar</div>
+          <div class="walk-row">
+            <a class="btn btn-sm js-walk" data-query="Congo Bar, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Congo%20Bar%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+            <a class="btn-ghost js-openmaps" data-query="Congo Bar, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Congo%20Bar%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            <button type="button" class="btn-ghost js-show-on-map" data-place="congo">Show on map</button>
+          </div>
+        </div>
+        <div class="bar">
+          <div class="bar-name">Swim-Up Bar</div>
+          <div class="walk-row">
+            <a class="btn btn-sm js-walk" data-query="Swim-Up Bar, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Swim-Up%20Bar%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+            <a class="btn-ghost js-openmaps" data-query="Swim-Up Bar, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Swim-Up%20Bar%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            <button type="button" class="btn-ghost js-show-on-map" data-place="swimup">Show on map</button>
+          </div>
+        </div>
+        <div class="bar">
+          <div class="bar-name">Jacuzzi Bar – Silent Zone</div>
+          <div class="walk-row">
+            <a class="btn btn-sm js-walk" data-query="Jacuzzi Bar, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Jacuzzi%20Bar%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+            <a class="btn-ghost js-openmaps" data-query="Jacuzzi Bar, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Jacuzzi%20Bar%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            <button type="button" class="btn-ghost js-show-on-map" data-place="jacuzzi">Show on map</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -724,5 +999,223 @@
       <p class="tiny">A private note for our people — not a public invitation page.</p>
     </footer>
   </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+(function () {
+  var RESORT = { lat: 20.8344639, lng: -86.8895111 };
+  var RESORT_QUERY = "Hotel Marina El Cid Spa & Beach Resort, Puerto Morelos";
+  var origin = null;
+  var selected = null;
+  var liveMap = null;
+  var youMarker = null;
+
+  var PLACES = {
+    alhambra:  { id: "alhambra",  name: "Alhambra",          short: "Alhambra",   kind: "eat",   letter: "H", x: 46.2, y: 23.4, where: "Main building · lobby area", details: "rest-alhambra",  query: "Alhambra Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    alcazar:   { id: "alcazar",   name: "Alcázar",           short: "Alcázar",    kind: "eat",   letter: "F", x: 48.3, y: 27.5, where: "Main building · near Alhambra", details: "rest-alcazar", query: "Alcázar Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    hacienda:  { id: "hacienda",  name: "Hacienda Arrecife", short: "Hacienda",   kind: "eat",   letter: "G", x: 35.4, y: 55.5, where: "By the pool", details: "rest-hacienda", query: "Hacienda Arrecife, Hotel Marina El Cid, Puerto Morelos" },
+    marina:    { id: "marina",    name: "La Marina",         short: "La Marina",  kind: "eat",   letter: "K", x: 3.5,  y: 48.4, where: "Far left · marina edge", details: "rest-marina", query: "La Marina Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    trattoria: { id: "trattoria", name: "Trattoria D’ Gulio",short: "Trattoria",  kind: "eat",   letter: "R", x: 70.5, y: 33.0, where: "Right wing of the main complex", details: "rest-trattoria", query: "Trattoria D' Gulio, Hotel Marina El Cid, Puerto Morelos" },
+    ile:       { id: "ile",       name: "Ilé de France",     short: "Ilé",        kind: "eat",   letter: "",  x: null, y: null, where: "Not on this older layout — likely Ventus", details: "rest-ile", query: "Ilé de France Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    mercado:   { id: "mercado",   name: "Mercado de Dolores",short: "Mercado",    kind: "eat",   letter: "",  x: null, y: null, where: "Not on this older layout — likely Ventus", details: "rest-mercado", query: "Mercado de Dolores, Hotel Marina El Cid, Puerto Morelos" },
+    kobo:      { id: "kobo",      name: "KOBO",              short: "KOBO",       kind: "eat",   letter: "",  x: null, y: null, where: "Not on this older layout — likely Ventus", details: "rest-kobo", query: "KOBO Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    aakat:     { id: "aakat",     name: "A’AKAT",            short: "A’AKAT",     kind: "eat",   letter: "",  x: null, y: null, where: "Not on this older layout — likely Ventus", details: "rest-aakat", query: "A'AKAT Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    scaramanga:{ id: "scaramanga",name: "Scaramanga Beach Bar", short: "Scaramanga", kind: "drink", letter: "Q", x: 14.5, y: 59.8, where: "On the beach", details: "", query: "Scaramanga Beach Bar, Hotel Marina El Cid, Puerto Morelos" },
+    lobbybar:  { id: "lobbybar",  name: "Lobby Bar",         short: "Lobby Bar",  kind: "drink", letter: "A", x: 52.5, y: 20.5, where: "Main building · lobby", details: "", query: "Lobby Bar, Hotel Marina El Cid, Puerto Morelos" },
+    congo:     { id: "congo",     name: "Congo Bar",         short: "Congo",      kind: "drink", letter: "J", x: 31.2, y: 45.8, where: "Pool deck", details: "", query: "Congo Bar, Hotel Marina El Cid, Puerto Morelos" },
+    swimup:    { id: "swimup",    name: "Swim-Up Bar",       short: "Swim-Up",    kind: "drink", letter: "I", x: 34.2, y: 53.2, where: "In the pool (wet bar)", details: "", query: "Swim-Up Bar, Hotel Marina El Cid, Puerto Morelos" },
+    jacuzzi:   { id: "jacuzzi",   name: "Jacuzzi Bar",       short: "Jacuzzi",    kind: "drink", letter: "P", x: 51.0, y: 59.4, where: "Beach · silent zone", details: "", query: "Jacuzzi Bar, Hotel Marina El Cid, Puerto Morelos" }
+  };
+
+  function walkUrl(query) {
+    var u = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(query) + "&travelmode=walking";
+    if (origin) u += "&origin=" + origin.lat + "," + origin.lng;
+    return u;
+  }
+  function searchUrl(query) {
+    return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
+  }
+  function haversine(a, b) {
+    var R = 6371000;
+    var dLat = (b.lat - a.lat) * Math.PI / 180;
+    var dLng = (b.lng - a.lng) * Math.PI / 180;
+    var la1 = a.lat * Math.PI / 180, la2 = b.lat * Math.PI / 180;
+    var h = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)*Math.sin(dLng/2);
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+  }
+  function bearing(from, to) {
+    var φ1 = from.lat * Math.PI/180, φ2 = to.lat * Math.PI/180;
+    var Δλ = (to.lng - from.lng) * Math.PI/180;
+    var y = Math.sin(Δλ) * Math.cos(φ2);
+    var x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
+    var deg = (Math.atan2(y, x) * 180/Math.PI + 360) % 360;
+    var dirs = ["north","northeast","east","southeast","south","southwest","west","northwest"];
+    return dirs[Math.round(deg / 45) % 8];
+  }
+  function refreshWalkHrefs() {
+    document.querySelectorAll(".js-walk").forEach(function (a) {
+      if (a.getAttribute("data-query")) a.href = walkUrl(a.getAttribute("data-query"));
+    });
+    document.querySelectorAll(".js-openmaps").forEach(function (a) {
+      if (a.getAttribute("data-query")) a.href = searchUrl(a.getAttribute("data-query"));
+    });
+    if (selected) {
+      document.getElementById("pin-walk").href = walkUrl(selected.query);
+      document.getElementById("pin-open").href = searchUrl(selected.query);
+    }
+  }
+  function directionCopy(place) {
+    var bits = [];
+    bits.push(place.where + ".");
+    if (origin) {
+      var m = haversine(origin, RESORT);
+      if (m < 400) {
+        bits.push("You’re on or right next to the resort — Walk uses your phone as the start.");
+      } else if (m < 2500) {
+        bits.push("You’re about " + Math.round(m/50)*50 + " m " + bearing(origin, RESORT) + " of the lobby pin. Walk starts from you.");
+      } else {
+        bits.push("The resort is roughly " + bearing(origin, RESORT) + " of you. Walk opens Google Maps from your position to this place name.");
+      }
+    } else {
+      bits.push("Turn on location so Walk starts from you — or just tap Walk and Google Maps will ask.");
+    }
+    return bits.join(" ");
+  }
+  function selectPlace(id, scrollMap) {
+    var place = PLACES[id];
+    if (!place) return;
+    selected = place;
+    document.querySelectorAll(".hotspot").forEach(function (el) {
+      el.classList.toggle("is-on", el.getAttribute("data-place") === id);
+    });
+    document.querySelectorAll(".pick").forEach(function (el) {
+      el.classList.toggle("is-on", el.getAttribute("data-place") === id);
+    });
+    var sheet = document.getElementById("pin-sheet");
+    sheet.hidden = false;
+    document.getElementById("pin-name").textContent = place.name;
+    document.getElementById("pin-where").textContent = place.letter ? ("Pin " + place.letter + " · " + place.where) : place.where;
+    document.getElementById("pin-dir").textContent = directionCopy(place);
+    document.getElementById("pin-walk").href = walkUrl(place.query);
+    document.getElementById("pin-open").href = searchUrl(place.query);
+    var det = document.getElementById("pin-details");
+    if (place.details) {
+      det.hidden = false;
+      det.href = "#" + place.details;
+    } else {
+      det.hidden = true;
+    }
+    if (scrollMap) {
+      document.getElementById("property").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+  function openDetails(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.open = true;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  var mapEl = document.getElementById("prop-map");
+  var eatBox = document.getElementById("picks-eat");
+  var drinkBox = document.getElementById("picks-drink");
+  Object.keys(PLACES).forEach(function (id) {
+    var place = PLACES[id];
+    var chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "pick" + (place.kind === "drink" ? " drink" : "");
+    chip.setAttribute("data-place", id);
+    chip.textContent = place.short;
+    chip.addEventListener("click", function () { selectPlace(id, false); });
+    (place.kind === "drink" ? drinkBox : eatBox).appendChild(chip);
+
+    if (place.x != null && place.y != null) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "hotspot" + (place.kind === "drink" ? " bar-pin" : "");
+      btn.setAttribute("data-place", id);
+      btn.style.left = place.x + "%";
+      btn.style.top = place.y + "%";
+      btn.textContent = place.letter;
+      btn.setAttribute("aria-label", place.name);
+      btn.addEventListener("click", function () { selectPlace(id, false); });
+      mapEl.appendChild(btn);
+    }
+  });
+
+  document.getElementById("pin-details").addEventListener("click", function (e) {
+    if (!selected || !selected.details) return;
+    e.preventDefault();
+    openDetails(selected.details);
+  });
+
+  document.querySelectorAll(".js-show-on-map").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      selectPlace(btn.getAttribute("data-place"), true);
+    });
+  });
+
+  function ensureLiveMap() {
+    var box = document.getElementById("live-map");
+    box.hidden = false;
+    if (liveMap) {
+      liveMap.invalidateSize();
+      return liveMap;
+    }
+    if (typeof L === "undefined") return null;
+    liveMap = L.map("live-map", { scrollWheelZoom: false, attributionControl: true }).setView([RESORT.lat, RESORT.lng], 16);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap"
+    }).addTo(liveMap);
+    L.marker([RESORT.lat, RESORT.lng]).addTo(liveMap).bindPopup("Hotel Marina El Cid");
+    return liveMap;
+  }
+  function showYouOnLiveMap() {
+    var map = ensureLiveMap();
+    if (!map || !origin) return;
+    if (youMarker) {
+      youMarker.setLatLng([origin.lat, origin.lng]);
+    } else {
+      var icon = L.divIcon({
+        className: "",
+        html: '<div style="width:16px;height:16px;border-radius:99px;background:#2a7ade;border:3px solid #fff;box-shadow:0 0 0 4px rgba(42,122,222,0.28)"></div>',
+        iconSize: [16, 16],
+        iconAnchor: [8, 8]
+      });
+      youMarker = L.marker([origin.lat, origin.lng], { icon: icon, title: "You" }).addTo(map);
+    }
+    var bounds = L.latLngBounds([[RESORT.lat, RESORT.lng], [origin.lat, origin.lng]]);
+    map.fitBounds(bounds.pad(0.35), { maxZoom: 17 });
+  }
+
+  document.getElementById("btn-geo").addEventListener("click", function () {
+    var status = document.getElementById("geo-status");
+    if (!navigator.geolocation) {
+      status.textContent = "This phone or browser can’t share location. Walk still opens Google Maps.";
+      return;
+    }
+    status.textContent = "Finding you…";
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      origin = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      var m = haversine(origin, RESORT);
+      var lat = origin.lat.toFixed(4);
+      var lng = origin.lng.toFixed(4);
+      if (m < 400) {
+        status.textContent = "You’re near the resort · " + lat + ", " + lng + " · Walk will start from here.";
+      } else if (m < 8000) {
+        status.textContent = "Location on · " + lat + ", " + lng + " · about " + (m/1000).toFixed(1) + " km from the lobby pin. Walk starts from you.";
+      } else {
+        status.textContent = "Location saved · " + lat + ", " + lng + " · Walk will still start from your phone.";
+      }
+      refreshWalkHrefs();
+      showYouOnLiveMap();
+      if (selected) document.getElementById("pin-dir").textContent = directionCopy(selected);
+    }, function () {
+      status.textContent = "Couldn’t get location. You can still tap Walk — Google Maps will use your phone if you allow it there.";
+    }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 });
+  });
+})();
+</script>
 </body>
 </html>
