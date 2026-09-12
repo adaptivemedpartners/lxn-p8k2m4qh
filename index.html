@@ -399,6 +399,60 @@
   }
   .menu-note li { margin: 3px 0; }
 
+  .menu-drop {
+    margin-top: 12px;
+    border: 1px solid rgba(184, 160, 122, 0.35);
+    border-radius: 12px;
+    background: #fffdf9;
+    overflow: hidden;
+  }
+  .menu-drop > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    font-weight: 750;
+    color: var(--dusty);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .menu-drop > summary::-webkit-details-marker { display: none; }
+  .menu-drop > summary::after {
+    content: "▾";
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .menu-drop[open] > summary::after { transform: rotate(180deg); }
+  .menu-drop .menu-panel {
+    padding: 0 12px 12px;
+    border-top: 1px solid rgba(184, 160, 122, 0.22);
+  }
+  .menu-drop .menu-hint {
+    margin: 8px 0 10px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .menu-drop .menu-list {
+    margin: 8px 0 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: #5a4a4e;
+  }
+  .menu-drop .menu-list li { margin: 3px 0; }
+  .menu-drop .course-label {
+    margin: 10px 0 4px;
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--dusty);
+  }
+
   /* Interactive property map + walk actions */
   .prop-map {
     position: relative;
@@ -686,7 +740,7 @@
     <section id="property">
       <p class="sec-kicker">On the grounds</p>
       <h2>Property map</h2>
-      <p class="lead">Pick a restaurant or bar — we’ll drop that pin on the layout. Tap <strong>Walk in Maps</strong> for Google walking directions (Live View on phones). Turn on location so Walk starts from where you are.</p>
+      <p class="lead">Full El Cid Puerto Morelos campus — <strong>Marina El Cid</strong>, <strong>Ventus</strong>, and <strong>Ventus Ha’</strong>. Pick a restaurant or bar — we’ll drop that pin on the layout. Tap <strong>Walk in Maps</strong> for Google walking directions (Live View on phones). Turn on location so Walk starts from where you are.</p>
 
       <p class="label" style="margin-bottom:6px">Eat</p>
       <div class="picks" id="picks-eat" role="list"></div>
@@ -696,7 +750,7 @@
       <div class="prop-wrap">
         <div class="prop-map" id="prop-map">
           <div class="prop-map-stage" id="prop-map-stage">
-            <img src="assets/property-map-unofficial.jpg?v=5" alt="Unofficial Marina El Cid property layout — tap a pin for a restaurant or bar" width="1274" height="983" />
+            <img src="assets/property-map-complex.jpg?v=1" alt="El Cid Puerto Morelos complex map — Marina, Ventus, and Ventus Ha’ — tap a pin for a restaurant or bar" width="1800" height="1379" />
           </div>
         </div>
       </div>
@@ -712,7 +766,7 @@
         </div>
       </div>
 
-      <p class="note">Unofficial layout — pins are approximate (purple letters on the drawing). Ilé de France, Mercado de Dolores, KOBO, and A’AKAT are not on this older map (likely Ventus) but still have Walk buttons under Dining. Walk opens Google Maps for live walking / Live View — we do not invent GPS coordinates for restaurants.</p>
+      <p class="note">Campus layout photo from a guest-shared resort map (covers Marina + Ventus + Ventus Ha’). <strong>Pins are approximate</strong> — letters match the printed legend when shown. Walk opens Google Maps by place name (we do not invent restaurant GPS). Older Marina-only sketch kept as <a href="assets/property-map-unofficial.jpg?v=5" target="_blank" rel="noopener noreferrer">reference</a>.</p>
 
       <div class="loc-strip">
         <button type="button" class="btn" id="btn-geo">Show my location</button>
@@ -728,7 +782,7 @@
 
       <div class="acc" role="list">
 
-        <details class="rest" id="rest-alhambra" role="listitem">
+        <details class="rest" name="dining-acc" id="rest-alhambra" role="listitem">
           <summary>
             <h3 class="r-name">Alhambra</h3>
             <p class="r-tag">Breakfast · Sat Mexican Fiesta · 7:00–11:30</p>
@@ -750,10 +804,17 @@
               <span class="chip">Sat Mexican Fiesta</span>
             </div>
             <p class="es">Desayuno / Breakfast Only · Sin Reservación · Cenas sábado 6:30–10:30 · Fiesta Mexicana</p>
-          </div>
+            <details class="menu-drop">
+              <summary>Menu</summary>
+              <div class="menu-panel">
+                <p class="menu-hint">No separate Ay Carta page found for Alhambra (buffet). See the resort’s dining overview — hours/items can change; confirm with butler.</p>
+                <a class="btn btn-sm" href="https://elcidvacationsclub.com/blog/riviera-maya-cuisine/" target="_blank" rel="noopener noreferrer">Resort dining page</a>
+              </div>
+            </details>
+</div>
         </details>
 
-        <details class="rest" id="rest-hacienda" role="listitem">
+        <details class="rest" name="dining-acc" id="rest-hacienda" role="listitem">
           <summary>
             <h3 class="r-name">Hacienda Arrecife</h3>
             <p class="r-tag">Mexican · Lunch 12:00–5:00</p>
@@ -773,10 +834,17 @@
             <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
             <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
             <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
-          </div>
+            <details class="menu-drop">
+              <summary>Menu</summary>
+              <div class="menu-panel">
+                <p class="menu-hint">Live menu from the resort’s digital menu (may change). Menu from resort digital menu — hours/items can change; confirm with butler.</p>
+                <a class="btn btn-sm" href="https://app.aycarta.com/en-us/s/hacienda-arrecife" target="_blank" rel="noopener noreferrer">Open full menu</a>
+              </div>
+            </details>
+</div>
         </details>
 
-        <details class="rest" id="rest-marina" role="listitem">
+        <details class="rest" name="dining-acc" id="rest-marina" role="listitem">
           <summary>
             <h3 class="r-name">La Marina</h3>
             <p class="r-tag">Seafood · Dinner 5:00–9:00 · reservation</p>
@@ -797,10 +865,17 @@
             <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
             <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
             <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
-          </div>
+            <details class="menu-drop">
+              <summary>Menu</summary>
+              <div class="menu-panel">
+                <p class="menu-hint">Live menu from the resort’s digital menu (may change). Menu from resort digital menu — hours/items can change; confirm with butler.</p>
+                <a class="btn btn-sm" href="https://app.aycarta.com/en-us/s/la-marina-cid" target="_blank" rel="noopener noreferrer">Open full menu</a>
+              </div>
+            </details>
+</div>
         </details>
 
-        <details class="rest" id="rest-trattoria" role="listitem">
+        <details class="rest" name="dining-acc" id="rest-trattoria" role="listitem">
           <summary>
             <h3 class="r-name">Trattoria D’ Gulio</h3>
             <p class="r-tag">Italian · Breakfast &amp; dinner · res. for dinner</p>
@@ -822,10 +897,17 @@
             <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
             <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
             <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
-          </div>
+            <details class="menu-drop">
+              <summary>Menu</summary>
+              <div class="menu-panel">
+                <p class="menu-hint">Live menu from the resort’s digital menu (may change). Menu from resort digital menu — hours/items can change; confirm with butler.</p>
+                <a class="btn btn-sm" href="https://app.aycarta.com/en-us/s/trattoria-d-gulio" target="_blank" rel="noopener noreferrer">Open full menu</a>
+              </div>
+            </details>
+</div>
         </details>
 
-        <details class="rest" id="rest-alcazar" role="listitem">
+        <details class="rest" name="dining-acc" id="rest-alcazar" role="listitem">
           <summary>
             <h3 class="r-name">Alcázar</h3>
             <p class="r-tag">Mediterranean · Dinner 5:00–9:30 · reservation</p>
@@ -846,10 +928,17 @@
             <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
             <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
             <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
-          </div>
+            <details class="menu-drop">
+              <summary>Menu</summary>
+              <div class="menu-panel">
+                <p class="menu-hint">Live menu from the resort’s digital menu (may change). Menu from resort digital menu — hours/items can change; confirm with butler.</p>
+                <a class="btn btn-sm" href="https://app.aycarta.com/en-us/s/alcazar" target="_blank" rel="noopener noreferrer">Open full menu</a>
+              </div>
+            </details>
+</div>
         </details>
 
-        <details class="rest" id="rest-ile" role="listitem">
+        <details class="rest" name="dining-acc" id="rest-ile" role="listitem">
           <summary>
             <h3 class="r-name">Ilé de France</h3>
             <p class="r-tag">French · Formal · Dinner 5:00–9:30</p>
@@ -860,6 +949,7 @@
             <div class="walk-row">
               <a class="btn btn-sm js-walk" data-query="Ilé de France Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Il%C3%A9%20de%20France%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
               <a class="btn-ghost js-openmaps" data-query="Ilé de France Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Il%C3%A9%20de%20France%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+              <button type="button" class="btn-ghost js-show-on-map" data-place="ile">Show on map</button>
             </div>
 
             <p class="label">Hours &amp; reservation</p>
@@ -869,10 +959,17 @@
             <p class="label" style="margin-top:10px">Dress code / Código de vestimenta — Formal</p>
             <p class="dress"><strong>EN</strong> — Men: long pants, formal collared / polo-style button shirt, closed shoes. Women: formal dress (or dress shorts), dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
             <p class="es"><strong>ES</strong> — Hombres: camisa con cuello y botones tipo polo y zapatos cerrados. Mujeres: vestido formal o shorts de vestir, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
-          </div>
+            <details class="menu-drop">
+              <summary>Menu</summary>
+              <div class="menu-panel">
+                <p class="menu-hint">Live menu from the resort’s digital menu (may change). Menu from resort digital menu — hours/items can change; confirm with butler.</p>
+                <a class="btn btn-sm" href="https://app.aycarta.com/en-us/s/ile-de-france" target="_blank" rel="noopener noreferrer">Open full menu</a>
+              </div>
+            </details>
+</div>
         </details>
 
-        <details class="rest" id="rest-mercado" role="listitem">
+        <details class="rest" name="dining-acc" id="rest-mercado" role="listitem">
           <summary>
             <h3 class="r-name">Mercado de Dolores</h3>
             <p class="r-tag">Coffee + 6 spots · 12:00–10:30 · no reservation</p>
@@ -883,6 +980,7 @@
             <div class="walk-row">
               <a class="btn btn-sm js-walk" data-query="Mercado de Dolores, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Mercado%20de%20Dolores%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
               <a class="btn-ghost js-openmaps" data-query="Mercado de Dolores, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Mercado%20de%20Dolores%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+              <button type="button" class="btn-ghost js-show-on-map" data-place="mercado">Show on map</button>
             </div>
 
             <p class="label">Hours &amp; reservation</p>
@@ -901,10 +999,17 @@
             <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
             <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
             <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
-          </div>
+            <details class="menu-drop">
+              <summary>Menu</summary>
+              <div class="menu-panel">
+                <p class="menu-hint">Mercado is a food-court with several concepts (not one Ay Carta page). See the resort dining overview — hours/items can change; confirm with butler.</p>
+                <a class="btn btn-sm" href="https://elcidvacationsclub.com/blog/riviera-maya-cuisine/" target="_blank" rel="noopener noreferrer">Resort dining page</a>
+              </div>
+            </details>
+</div>
         </details>
 
-        <details class="rest" id="rest-kobo" role="listitem">
+        <details class="rest" name="dining-acc" id="rest-kobo" role="listitem">
           <summary>
             <h3 class="r-name">KOBO</h3>
             <p class="r-tag">Teppanyaki · Dinner 17:00–21:30 · reservation</p>
@@ -915,6 +1020,7 @@
             <div class="walk-row">
               <a class="btn btn-sm js-walk" data-query="KOBO Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=KOBO%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
               <a class="btn-ghost js-openmaps" data-query="KOBO Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=KOBO%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+              <button type="button" class="btn-ghost js-show-on-map" data-place="kobo">Show on map</button>
             </div>
 
             <p class="label">Hours &amp; reservation</p>
@@ -924,10 +1030,17 @@
             <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
             <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
             <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
-          </div>
+            <details class="menu-drop">
+              <summary>Menu</summary>
+              <div class="menu-panel">
+                <p class="menu-hint">Live menu from the resort’s digital menu (may change). Menu from resort digital menu — hours/items can change; confirm with butler.</p>
+                <a class="btn btn-sm" href="https://app.aycarta.com/en-us/s/restaurante-kobo" target="_blank" rel="noopener noreferrer">Open full menu</a>
+              </div>
+            </details>
+</div>
         </details>
 
-        <details class="rest" id="rest-aakat" role="listitem">
+        <details class="rest" name="dining-acc" id="rest-aakat" role="listitem">
           <summary>
             <h3 class="r-name">A’AKAT</h3>
             <p class="r-tag">Ibero-American · Breakfast &amp; dinner</p>
@@ -938,6 +1051,7 @@
             <div class="walk-row">
               <a class="btn btn-sm js-walk" data-query="A'AKAT Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=A%27AKAT%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
               <a class="btn-ghost js-openmaps" data-query="A'AKAT Restaurant, Hotel Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=A%27AKAT%20Restaurant%2C%20Hotel%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+              <button type="button" class="btn-ghost js-show-on-map" data-place="aakat">Show on map</button>
             </div>
 
             <p class="label">Hours &amp; reservation</p>
@@ -948,28 +1062,80 @@
             <p class="label" style="margin-top:10px">Dress code / Código de vestimenta</p>
             <p class="dress"><strong>EN</strong> — Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
             <p class="es"><strong>ES</strong> — Hombres: playera, pantalón largo o shorts y zapatos cerrados. Mujeres: vestimenta casual, sandalias de vestir. No se permiten playeras sin mangas, sandalias para agua, ropa deportiva ni trajes de baño.</p>
-          </div>
+            <details class="menu-drop">
+              <summary>Menu</summary>
+              <div class="menu-panel">
+                <p class="menu-hint">Live menu from the resort’s digital menu (may change). Menu from resort digital menu — hours/items can change; confirm with butler.</p>
+                <a class="btn btn-sm" href="https://app.aycarta.com/en-us/s/restaurante-aakat" target="_blank" rel="noopener noreferrer">Open full menu</a>
+              </div>
+            </details>
+</div>
         </details>
 
-        <details class="rest" role="listitem">
+        <details class="rest" name="dining-acc" id="rest-wedding" role="listitem">
           <summary>
             <h3 class="r-name">Wedding dinner menu</h3>
-            <p class="r-tag">From Guadalupe’s Wedding Menu (Eng.) PDF</p>
+            <p class="r-tag">Ceremony dinner choices · not daily restaurant menus</p>
             <span class="chev" aria-hidden="true">▾</span>
           </summary>
           <div class="rest-body">
-            <p class="when" style="margin-top:10px">This is the <strong>ceremony dinner selection guide</strong> (not the à-la-carte restaurant menus). Final choices go on the Wedding Form — we are not listing chosen dishes here yet.</p>
+            <p class="when" style="margin-top:10px">This is the <strong>ceremony dinner selection guide</strong> from Guadalupe’s Wedding Menu (Eng.) PDF — not the à-la-carte restaurant menus. Final choices go on the Wedding Form.</p>
             <div class="menu-note">
-              <strong>Extras from the Wedding Menu PDF</strong>
+              <strong>Selection guidelines</strong>
               <ul>
                 <li>Set menu for all guests — one option per course (starter, main, dessert).</li>
                 <li>If two mains are chosen, they are served alternating (guests get one at random).</li>
                 <li>Events over 40 guests may select up to three options of a dish.</li>
                 <li>Contract confirms whether the menu is three or four courses.</li>
-                <li>Dietary needs (vegetarian, vegan, gluten-free, allergies): tell the resort in advance — special meals with prior notice.</li>
-                <li>PDF course lists include salads, soups &amp; creams, main dishes, and desserts — we’ll share the final selected set once locked on the Wedding Form.</li>
+                <li>Dietary needs (vegetarian, vegan, gluten-free, allergies): tell the resort in advance.</li>
               </ul>
             </div>
+            <details class="menu-drop">
+              <summary>Wedding dinner dish options</summary>
+              <div class="menu-panel">
+                <p class="menu-hint">From the Wedding Menu PDF — selection options for our ceremony dinner, not daily restaurant menus.</p>
+                <p class="course-label">Salads</p>
+                <ul class="menu-list">
+                  <li>Caesar Salad &amp; Shrimps Brochettes — lettuce, French dressing</li>
+                  <li>Mediterranean Salad with Shrimps — sweet pepper chili, fine lettuce, tomato, mushrooms, vinaigrette</li>
+                  <li>Caprese Salad — olive oil, balsamic, grissini</li>
+                  <li>Salmon Rolls — stuffed with cream cheese and avocado</li>
+                  <li>Spinach Salad — feta cheese and croutons</li>
+                  <li>Fine Lettuce Salad with Grilled Chicken — goat cheese, tomato, cucumber, alfalfa sprouts, garlic croutons, balsamic</li>
+                </ul>
+                <p class="course-label">Soups &amp; creams</p>
+                <ul class="menu-list">
+                  <li>Tomato and Carrot Cream with Brie</li>
+                  <li>Pumpkin Cream with Grilled Shrimps</li>
+                  <li>Asparagus Cream with Goat Cheese</li>
+                  <li>Bisque of Shrimp with Choux Pastry Croutons</li>
+                  <li>Minestrone Soup with Linguini</li>
+                  <li>Wonton Soup with Shrimps and Vegetables Julienne</li>
+                  <li>Salmon Broth with Potatoes and Chard</li>
+                </ul>
+                <p class="course-label">Main dishes</p>
+                <ul class="menu-list">
+                  <li>Chicken Breast Stuffed with Crystalized Fruits — citrus sauce, duchess potato, vegetables</li>
+                  <li>Turkey Breast Filled with Cream Cheese, Shrimp &amp; Asparagus — mushrooms sauce, risotto, vegetables</li>
+                  <li>Chicken Breast Stuffed with Cured Ham and Swiss Cheese — muhammara &amp; basil sauce, potato lasagne, vegetables</li>
+                  <li>Fish Fillet Filled with Cheese and Sautéed Spinach — green pepper &amp; cream cheese sauce, shrimp risotto, asparagus</li>
+                  <li>Beef Fillet in Portobello Mushrooms Sauce — potato au gratin, peppers, asparagus</li>
+                  <li>Pork Tenderloin in Apple and Red Curry Sauce — potato lasagne, vegetables</li>
+                  <li>Beef Fillet in Roquefort Cheese Sauce — mashed potato with wonton pasta</li>
+                  <li>Sautéed Shrimps in Shiitake Mushrooms Sauce — creamy risotto, white wine, chard, asparagus</li>
+                  <li>Beef Tournedos in Red Wine and Shallot Reduction — broccoli purée, steamed vegetables</li>
+                </ul>
+                <p class="course-label">Desserts</p>
+                <ul class="menu-list">
+                  <li>Fruit Tart with Amarena Sauce</li>
+                  <li>Passion Chocolate Pump with Cappuccino Sauce</li>
+                  <li>Cheesecake with Baileys Cream &amp; Passion Fruit Sauce</li>
+                  <li>Pistachio Gioconda with Hazelnut Mousse &amp; Almond Crumble</li>
+                  <li>Apple Tart with Streusel, Brandy and Cinnamon Sauce</li>
+                  <li>Napoleon Cake with Raspberry Sauce</li>
+                </ul>
+              </div>
+            </details>
             <p class="es">Menú de cena de boda (guía de selección) · Selecciones finales en el Wedding Form.</p>
           </div>
         </details>
@@ -1019,6 +1185,22 @@
             <button type="button" class="btn-ghost js-show-on-map" data-place="jacuzzi">Show on map</button>
           </div>
         </div>
+        <div class="bar">
+          <div class="bar-name">Waves · Ventus Ha’</div>
+          <div class="walk-row">
+            <a class="btn btn-sm js-walk" data-query="Waves Bar, Ventus Ha Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Waves%20Bar%2C%20Ventus%20Ha%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+            <a class="btn-ghost js-openmaps" data-query="Waves Bar, Ventus Ha Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Waves%20Bar%2C%20Ventus%20Ha%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            <button type="button" class="btn-ghost js-show-on-map" data-place="waves">Show on map</button>
+          </div>
+        </div>
+        <div class="bar">
+          <div class="bar-name">RUF / Na Ha rooftop · Ventus Ha’</div>
+          <div class="walk-row">
+            <a class="btn btn-sm js-walk" data-query="Na Ha Rooftop Bar, Ventus Ha Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/dir/?api=1&amp;destination=Na%20Ha%20Rooftop%20Bar%2C%20Ventus%20Ha%20Marina%20El%20Cid%2C%20Puerto%20Morelos&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Walk there</a>
+            <a class="btn-ghost js-openmaps" data-query="Na Ha Rooftop Bar, Ventus Ha Marina El Cid, Puerto Morelos" href="https://www.google.com/maps/search/?api=1&amp;query=Na%20Ha%20Rooftop%20Bar%2C%20Ventus%20Ha%20Marina%20El%20Cid%2C%20Puerto%20Morelos" target="_blank" rel="noopener noreferrer">Open in Maps</a>
+            <button type="button" class="btn-ghost js-show-on-map" data-place="ruf">Show on map</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1040,20 +1222,22 @@
   var youMarker = null;
 
   var PLACES = {
-    alhambra:  { id: "alhambra",  name: "Alhambra",          short: "Alhambra",   kind: "eat",   letter: "H", x: 46.2, y: 23.4, where: "Main building · lobby area", details: "rest-alhambra",  query: "Alhambra Restaurant, Hotel Marina El Cid, Puerto Morelos" },
-    alcazar:   { id: "alcazar",   name: "Alcázar",           short: "Alcázar",    kind: "eat",   letter: "F", x: 48.3, y: 27.5, where: "Main building · near Alhambra", details: "rest-alcazar", query: "Alcázar Restaurant, Hotel Marina El Cid, Puerto Morelos" },
-    hacienda:  { id: "hacienda",  name: "Hacienda Arrecife", short: "Hacienda",   kind: "eat",   letter: "G", x: 35.4, y: 55.5, where: "By the pool", details: "rest-hacienda", query: "Hacienda Arrecife, Hotel Marina El Cid, Puerto Morelos" },
-    marina:    { id: "marina",    name: "La Marina",         short: "La Marina",  kind: "eat",   letter: "K", x: 3.5,  y: 48.4, where: "Far left · marina edge", details: "rest-marina", query: "La Marina Restaurant, Hotel Marina El Cid, Puerto Morelos" },
-    trattoria: { id: "trattoria", name: "Trattoria D’ Gulio",short: "Trattoria",  kind: "eat",   letter: "R", x: 70.5, y: 33.0, where: "Right wing of the main complex", details: "rest-trattoria", query: "Trattoria D' Gulio, Hotel Marina El Cid, Puerto Morelos" },
-    ile:       { id: "ile",       name: "Ilé de France",     short: "Ilé",        kind: "eat",   letter: "",  x: null, y: null, where: "Not on this older layout — likely Ventus", details: "rest-ile", query: "Ilé de France Restaurant, Hotel Marina El Cid, Puerto Morelos" },
-    mercado:   { id: "mercado",   name: "Mercado de Dolores",short: "Mercado",    kind: "eat",   letter: "",  x: null, y: null, where: "Not on this older layout — likely Ventus", details: "rest-mercado", query: "Mercado de Dolores, Hotel Marina El Cid, Puerto Morelos" },
-    kobo:      { id: "kobo",      name: "KOBO",              short: "KOBO",       kind: "eat",   letter: "",  x: null, y: null, where: "Not on this older layout — likely Ventus", details: "rest-kobo", query: "KOBO Restaurant, Hotel Marina El Cid, Puerto Morelos" },
-    aakat:     { id: "aakat",     name: "A’AKAT",            short: "A’AKAT",     kind: "eat",   letter: "",  x: null, y: null, where: "Not on this older layout — likely Ventus", details: "rest-aakat", query: "A'AKAT Restaurant, Hotel Marina El Cid, Puerto Morelos" },
-    scaramanga:{ id: "scaramanga",name: "Scaramanga Beach Bar", short: "Scaramanga", kind: "drink", letter: "Q", x: 14.5, y: 59.8, where: "On the beach", details: "", query: "Scaramanga Beach Bar, Hotel Marina El Cid, Puerto Morelos" },
-    lobbybar:  { id: "lobbybar",  name: "Lobby Bar",         short: "Lobby Bar",  kind: "drink", letter: "A", x: 52.5, y: 20.5, where: "Main building · lobby", details: "", query: "Lobby Bar, Hotel Marina El Cid, Puerto Morelos" },
-    congo:     { id: "congo",     name: "Congo Bar",         short: "Congo",      kind: "drink", letter: "J", x: 31.2, y: 45.8, where: "Pool deck", details: "", query: "Congo Bar, Hotel Marina El Cid, Puerto Morelos" },
-    swimup:    { id: "swimup",    name: "Swim-Up Bar",       short: "Swim-Up",    kind: "drink", letter: "I", x: 34.2, y: 53.2, where: "In the pool (wet bar)", details: "", query: "Swim-Up Bar, Hotel Marina El Cid, Puerto Morelos" },
-    jacuzzi:   { id: "jacuzzi",   name: "Jacuzzi Bar",       short: "Jacuzzi",    kind: "drink", letter: "P", x: 51.0, y: 59.4, where: "Beach · silent zone", details: "", query: "Jacuzzi Bar, Hotel Marina El Cid, Puerto Morelos" }
+    alhambra:  { id: "alhambra",  name: "Alhambra",          short: "Alhambra",   kind: "eat",   letter: "H", x: 54.5, y: 51.5, where: "Marina · main building / lobby area", details: "rest-alhambra",  query: "Alhambra Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    alcazar:   { id: "alcazar",   name: "Alcázar",           short: "Alcázar",    kind: "eat",   letter: "G", x: 52.0, y: 49.5, where: "Marina · main building · near Alhambra", details: "rest-alcazar", query: "Alcázar Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    hacienda:  { id: "hacienda",  name: "Hacienda Arrecife", short: "Hacienda",   kind: "eat",   letter: "I", x: 48.0, y: 66.0, where: "Marina · by the main pool", details: "rest-hacienda", query: "Hacienda Arrecife, Hotel Marina El Cid, Puerto Morelos" },
+    marina:    { id: "marina",    name: "La Marina",         short: "La Marina",  kind: "eat",   letter: "L", x: 26.0, y: 74.0, where: "Marina docks · far left", details: "rest-marina", query: "La Marina Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    trattoria: { id: "trattoria", name: "Trattoria D’ Gulio",short: "Trattoria",  kind: "eat",   letter: "N", x: 65.5, y: 55.0, where: "Between Marina & Ventus · near bldg 10–11", details: "rest-trattoria", query: "Trattoria D' Gulio, Hotel Marina El Cid, Puerto Morelos" },
+    ile:       { id: "ile",       name: "Ilé de France",     short: "Ilé",        kind: "eat",   letter: "Q", x: 80.0, y: 48.0, where: "Ventus · near buildings 24–25", details: "rest-ile", query: "Ilé de France Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    mercado:   { id: "mercado",   name: "Mercado de Dolores",short: "Mercado",    kind: "eat",   letter: "R", x: 76.0, y: 58.5, where: "Ventus · near buildings 21–22 (R/S on map)", details: "rest-mercado", query: "Mercado de Dolores, Hotel Marina El Cid, Puerto Morelos" },
+    kobo:      { id: "kobo",      name: "KOBO",              short: "KOBO",       kind: "eat",   letter: "U", x: 55.0, y: 10.5, where: "Ventus Ha’ · KOBO / A’AKAT building", details: "rest-kobo", query: "KOBO Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    aakat:     { id: "aakat",     name: "A’AKAT",            short: "A’AKAT",     kind: "eat",   letter: "T", x: 62.5, y: 10.5, where: "Ventus Ha’ · next to KOBO", details: "rest-aakat", query: "A'AKAT Restaurant, Hotel Marina El Cid, Puerto Morelos" },
+    scaramanga:{ id: "scaramanga",name: "Scaramanga Beach Bar", short: "Scaramanga", kind: "drink", letter: "M", x: 35.0, y: 69.5, where: "Marina · beach", details: "", query: "Scaramanga Beach Bar, Hotel Marina El Cid, Puerto Morelos" },
+    lobbybar:  { id: "lobbybar",  name: "Lobby Bar",         short: "Lobby Bar",  kind: "drink", letter: "A", x: 54.0, y: 47.5, where: "Marina · lobby (service pin A)", details: "", query: "Lobby Bar, Hotel Marina El Cid, Puerto Morelos" },
+    congo:     { id: "congo",     name: "Congo Bar",         short: "Congo",      kind: "drink", letter: "K", x: 42.0, y: 60.0, where: "Marina · pool deck", details: "", query: "Congo Bar, Hotel Marina El Cid, Puerto Morelos" },
+    swimup:    { id: "swimup",    name: "Swim-Up / Wet Bar", short: "Swim-Up",    kind: "drink", letter: "J", x: 50.0, y: 67.5, where: "Marina · in the main pool", details: "", query: "Swim-Up Bar, Hotel Marina El Cid, Puerto Morelos" },
+    jacuzzi:   { id: "jacuzzi",   name: "Jacuzzi Bar",       short: "Jacuzzi",    kind: "drink", letter: "",  x: 46.0, y: 72.0, where: "Marina · beach / silent zone (icon on map)", details: "", query: "Jacuzzi Bar, Hotel Marina El Cid, Puerto Morelos" },
+    waves:     { id: "waves",     name: "Waves",             short: "Waves",      kind: "drink", letter: "X", x: 52.5, y: 24.5, where: "Ventus Ha’ · Waves lounge", details: "", query: "Waves Bar, Ventus Ha Marina El Cid, Puerto Morelos" },
+    ruf:       { id: "ruf",       name: "RUF / Na Ha rooftop", short: "RUF / Na Ha", kind: "drink", letter: "V", x: 84.0, y: 16.0, where: "Ventus Ha’ · building 28 rooftop (RUF 6º on map)", details: "", query: "Na Ha Rooftop Bar, Ventus Ha Marina El Cid, Puerto Morelos" }
   };
 
   function walkUrl(query) {
@@ -1150,6 +1334,7 @@
     } else {
       det.hidden = true;
     }
+    zoomToPlace(place);
     if (scrollMap) {
       document.getElementById("property").scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -1182,7 +1367,7 @@
       btn.setAttribute("data-place", id);
       btn.style.left = place.x + "%";
       btn.style.top = place.y + "%";
-      btn.textContent = place.letter;
+      btn.textContent = place.letter || "•";
       btn.setAttribute("aria-label", place.name);
       btn.addEventListener("click", function () { selectPlace(id, false); });
       stageEl.appendChild(btn);
@@ -1193,6 +1378,17 @@
     if (!selected || !selected.details) return;
     e.preventDefault();
     openDetails(selected.details);
+  });
+
+
+  // One-open accordion for restaurant cards (name= covers modern browsers; this covers all)
+  document.querySelectorAll("details.rest").forEach(function (d) {
+    d.addEventListener("toggle", function () {
+      if (!d.open) return;
+      document.querySelectorAll("details.rest").forEach(function (other) {
+        if (other !== d) other.open = false;
+      });
+    });
   });
 
   document.querySelectorAll(".js-show-on-map").forEach(function (btn) {
