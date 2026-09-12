@@ -2098,7 +2098,14 @@
         var te = document.getElementById("event-times");
         if (te) setTimeout(function () { window.scrollTo({ top: 0, behavior: "smooth" }); }, 20);
       } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        /* Keep section pills (#basics/#where/#property/#dining) — do not yank to top */
+        var mh = (location.hash || "").toLowerCase();
+        if (/^#(basics|where|property|dining)$/.test(mh)) {
+          var sec = document.getElementById(mh.slice(1));
+          if (sec) setTimeout(function () { sec.scrollIntoView({ behavior: "smooth", block: "start" }); }, 40);
+        } else if (push) {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
       }
     }
 
