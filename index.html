@@ -270,6 +270,41 @@
     font-size: 14px;
     color: var(--ink);
   }
+
+  .when { font-size: 14px; color: var(--ink); margin: 2px 0 0; }
+  .dress {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.45;
+  }
+  .es { font-size: 11.5px; color: #9a8b8e; font-style: italic; margin-top: 3px; }
+  .chip-row { margin-top: 8px; }
+  .chip.warn {
+    color: #7a4a2a;
+    background: #fff3e6;
+  }
+  .chip.ok {
+    color: #3d6a58;
+    background: #eaf6f0;
+  }
+  .chip.formal {
+    color: #6a3d4a;
+    background: #f8e8ee;
+  }
+  .nested {
+    margin-top: 10px;
+    display: grid;
+    gap: 6px;
+  }
+  .nested .mini {
+    background: #fbf7f2;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 13.5px;
+  }
+  .nested .mini strong { font-weight: 700; }
+  .nested .mini span { color: var(--muted); font-weight: 500; }
   footer {
     text-align: center;
     padding: 28px 22px 10px;
@@ -366,28 +401,101 @@
     <section id="dining">
       <p class="sec-kicker">On-property dining (Marina El Cid)</p>
       <h2>Where to eat</h2>
-      <p class="lead">Official Hotel Marina El Cid restaurants only. Hours can shift — ask the lobby or your butler.</p>
-      <p class="note">Guadalupe’s personal dining list will replace or merge here if we get it later. Nothing off-property is listed.</p>
-      <div class="cards" style="margin-top:12px">
+      <p class="lead">From Guadalupe’s restaurant information. Hours and dress can change — confirm with the lobby or butler.</p>
+      <div class="cards">
         <article class="card">
-          <h3>La Alhambra</h3>
-          <p class="dine-meta">International buffet · breakfast, lunch &amp; dinner · near the lobby</p>
+          <p class="label">Breakfast · Saturday dinner</p>
+          <h3>Alhambra</h3>
+          <p class="when">Breakfast only 7:00–11:30 · no reservation</p>
+          <p class="when">Dinner Saturday only — Mexican Fiesta 6:30–10:30</p>
+          <div class="chip-row">
+            <span class="chip ok">No reservation (breakfast)</span>
+            <span class="chip">Sat Mexican Fiesta</span>
+          </div>
+          <p class="es">Desayuno sin reservación · Cena sábado, Fiesta Mexicana</p>
         </article>
+
         <article class="card">
-          <h3>El Alcázar</h3>
-          <p class="dine-meta">Asian–Mediterranean · dinner · reservations · near the lobby</p>
-        </article>
-        <article class="card">
+          <p class="label">Mexican</p>
           <h3>Hacienda Arrecife</h3>
-          <p class="dine-meta">Mexican · dinner reservations · near the main pool</p>
+          <p class="when">Lunch only 12:00–5:00</p>
+          <div class="chip-row"><span class="chip">Casual dress code</span></div>
+          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+          <p class="es">Comida solamente · código casual</p>
         </article>
+
         <article class="card">
+          <p class="label">Seafood</p>
           <h3>La Marina</h3>
-          <p class="dine-meta">Seafood · marina views · dinner reservations</p>
+          <p class="when">Dinner 5:00–9:00 · reservation required</p>
+          <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
+          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+          <p class="es">Cena con reservación · código de vestimenta</p>
         </article>
+
         <article class="card">
-          <h3>Trattoria Di Gulio</h3>
-          <p class="dine-meta">Italian · pasta &amp; pizza · dinner reservations</p>
+          <p class="label">Italian</p>
+          <h3>Trattoria D’ Gulio</h3>
+          <p class="when">Breakfast 7:30–11:30</p>
+          <p class="when">Dinner 5:00–9:30 · reservation required</p>
+          <div class="chip-row"><span class="chip warn">Dinner reservation required</span><span class="chip">Dress code</span></div>
+          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+          <p class="es">Desayuno · Cena con reservación</p>
+        </article>
+
+        <article class="card">
+          <p class="label">Mediterranean</p>
+          <h3>Alcázar</h3>
+          <p class="when">Dinner 5:00–9:30 · reservation required</p>
+          <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
+          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+          <p class="es">Cena con reservación · código de vestimenta</p>
+        </article>
+
+        <article class="card">
+          <p class="label">French · formal</p>
+          <h3>Ilé de France</h3>
+          <p class="when">Dinner 5:00–9:30 · reservation required</p>
+          <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip formal">Formal dress code</span></div>
+          <p class="dress">Formal. Men: long pants, formal collared shirt, closed shoes. Women: formal dress (or dress shorts), dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+          <p class="es">Cena formal con reservación</p>
+        </article>
+
+        <article class="card">
+          <p class="label">Coffee center + 6 restaurants</p>
+          <h3>Mercado de Dolores</h3>
+          <p class="when">12:00–10:30 · no reservation</p>
+          <div class="chip-row"><span class="chip ok">No reservation</span><span class="chip">Dress code</span></div>
+          <div class="nested">
+            <div class="mini"><strong>Aromas Cafetería</strong> <span>· coffee</span></div>
+            <div class="mini"><strong>Maíz</strong> <span>· Mexican</span></div>
+            <div class="mini"><strong>Il Peccato</strong> <span>· Italian</span></div>
+            <div class="mini"><strong>Sea Place</strong> <span>· seafood</span></div>
+            <div class="mini"><strong>Fresko</strong> <span>· salad / healthy</span></div>
+            <div class="mini"><strong>La Crepe</strong> <span>· desserts</span></div>
+            <div class="mini"><strong>The Wok</strong> <span>· Asian</span></div>
+          </div>
+          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+          <p class="es">Sin reservación · 12:00–10:30</p>
+        </article>
+
+        <article class="card">
+          <p class="label">Teppanyaki · Japanese</p>
+          <h3>KOBO</h3>
+          <p class="when">Dinner 17:00–21:30 · reservation required</p>
+          <div class="chip-row"><span class="chip warn">Reservation required</span><span class="chip">Dress code</span></div>
+          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+          <p class="es">Cena con reservación</p>
+        </article>
+
+        <article class="card">
+          <p class="label">Ibero-American · open kitchen</p>
+          <h3>A’AKAT</h3>
+          <p class="when">Breakfast 7:30–11:00 · no reservation</p>
+          <p class="when">Dinner 17:00–21:30 · reservation required</p>
+          <div class="chip-row"><span class="chip ok">Breakfast — no reservation</span><span class="chip warn">Dinner reservation required</span></div>
+          <p class="dress">Men: shirt, long pants or shorts, closed shoes. Women: cocktail-casual dresses, dress sandals. Not allowed: sleeveless shirts, beach sandals, swimsuits, sport clothing.</p>
+          <p class="es">Desayuno sin reservación · Cena con reservación</p>
         </article>
       </div>
 
