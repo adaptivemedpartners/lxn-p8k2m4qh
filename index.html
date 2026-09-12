@@ -655,10 +655,64 @@
     margin: 0 0 4px;
   }
   footer .tiny { font-size: 12px; color: #9a8b8e; margin-top: 8px; }
+
+  /* Browser-style page nav for multi-page later */
+  .page-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    margin: 0;
+    background: rgba(255, 253, 251, 0.92);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  .page-nav .pn-btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--dusty);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 36px;
+  }
+  .page-nav .pn-btn:active {
+    transform: scale(0.98);
+  }
+  .page-nav .pn-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .page-nav .pn-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
 </style>
 </head>
 <body>
   <div class="wrap">
+    <div class="page-nav" role="navigation" aria-label="Page">
+      <button type="button" class="pn-btn" id="nav-back" aria-label="Go back">← Back</button>
+      <span class="pn-label">Pages</span>
+      <button type="button" class="pn-btn" id="nav-forward" aria-label="Go forward">Forward →</button>
+    </div>
+
     <header class="hero">
       <img src="assets/hero-vow-renewal.jpg" alt="Erica and Mike Freeman with family on the beach" />
       <div class="hero-copy">
@@ -1458,6 +1512,19 @@
     }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 });
   });
 })();
+</script>
+<script>
+
+  (function () {
+    var back = document.getElementById("nav-back");
+    var fwd = document.getElementById("nav-forward");
+    if (!back || !fwd) return;
+    back.addEventListener("click", function () {
+      if (window.history.length > 1) window.history.back();
+      else window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    fwd.addEventListener("click", function () { window.history.forward(); });
+  })();
 </script>
 </body>
 </html>
