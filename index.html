@@ -737,6 +737,166 @@
     text-transform: uppercase;
     color: var(--muted);
   }
+
+  /* Map pan when zoomed */
+  .prop-map.is-zoomed {
+    touch-action: none;
+    cursor: grab;
+  }
+  .prop-map.is-zoomed.is-panning {
+    cursor: grabbing;
+  }
+  .prop-map.is-zoomed .prop-map-stage {
+    transition: none; /* snappy while dragging; applyMapTransform restores ease when idle */
+  }
+  .prop-map.is-zoomed:not(.is-panning) .prop-map-stage {
+    transition: transform 0.35s ease;
+  }
+
+  /* Top-level view tabs (under Back/Forward) */
+  .view-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px 8px;
+    margin: 0;
+    background: rgba(255, 250, 247, 0.94);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 52px;
+    z-index: 35;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .view-tabs button {
+    appearance: none;
+    flex: 1 1 0;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--dusty);
+    border-radius: 999px;
+    padding: 9px 8px;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 40px;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .view-tabs button.is-on {
+    background: linear-gradient(180deg, #f3e4e8 0%, #e8d0d8 100%);
+    color: #5a3e48;
+    border-color: rgba(184, 137, 150, 0.55);
+    box-shadow: 0 4px 12px rgba(184, 137, 150, 0.22);
+  }
+  .view-panel[hidden] { display: none !important; }
+
+  /* Guests & arrivals */
+  .draft-note {
+    background: #fff8ee;
+    border: 1px solid rgba(201, 184, 150, 0.55);
+    border-radius: 14px;
+    padding: 10px 13px;
+    font-size: 12.5px;
+    color: #6a5a48;
+    margin: 0 0 14px;
+  }
+  .guest-group {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 13px 14px 12px;
+    box-shadow: 0 6px 18px rgba(61, 51, 54, 0.04);
+    margin-bottom: 10px;
+  }
+  .guest-group .g-num {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dusty);
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+  .guest-group h3 {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 19px;
+    font-weight: 550;
+    margin: 0 0 8px;
+    color: #4a3a3e;
+  }
+  .guest-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .guest-chips span {
+    display: inline-block;
+    background: linear-gradient(180deg, #fff 0%, #f7eef1 100%);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .guest-chips .note-chip {
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 12.5px;
+    background: #fff8ee;
+  }
+  .arrive-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 13px 14px 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 6px 18px rgba(61, 51, 54, 0.04);
+  }
+  .arrive-card .a-who {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 18px;
+    font-weight: 550;
+    margin: 0 0 6px;
+    color: #4a3a3e;
+  }
+  .arrive-card .a-row {
+    font-size: 13.5px;
+    color: var(--ink);
+    margin: 0 0 3px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .arrive-card .a-row .tag {
+    flex: 0 0 auto;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ocean-deep);
+    background: rgba(111, 168, 178, 0.15);
+    border-radius: 6px;
+    padding: 2px 7px;
+    margin-top: 1px;
+  }
+  .arrive-card .a-row .tag.out {
+    color: #8a5a6a;
+    background: rgba(212, 176, 186, 0.28);
+  }
+  .arrive-card .a-row .tag.open {
+    color: #6a5a48;
+    background: rgba(201, 184, 150, 0.28);
+  }
+  .arrive-card .a-meta {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin: 6px 0 0;
+  }
+  .subhead-split {
+    margin: 22px 0 10px;
+  }
 </style>
 </head>
 <body>
@@ -747,6 +907,13 @@
       <button type="button" class="pn-btn" id="nav-forward" aria-label="Go forward">Forward →</button>
     </div>
 
+    <div class="view-tabs" role="tablist" aria-label="Sections">
+      <button type="button" role="tab" id="tab-main" aria-controls="panel-main" aria-selected="true" class="is-on">Main</button>
+      <button type="button" role="tab" id="tab-guests" aria-controls="panel-guests" aria-selected="false">Guests</button>
+      <button type="button" role="tab" id="tab-times" aria-controls="panel-times" aria-selected="false">Event times</button>
+    </div>
+
+    <div id="panel-main" class="view-panel" role="tabpanel" aria-labelledby="tab-main">
     <header class="hero">
       <img src="assets/hero-vow-renewal.jpg" alt="Erica and Mike Freeman with family on the beach" />
       <div class="hero-copy">
@@ -1299,6 +1466,156 @@
         </div>
       </div>
     </section>
+    </div><!-- /panel-main -->
+
+    <div id="panel-guests" class="view-panel" role="tabpanel" aria-labelledby="tab-guests" hidden>
+      <section id="guests">
+        <p class="sec-kicker">Who’s coming</p>
+        <h2>Guest list</h2>
+        <p class="lead">About 27 of us, by travel group.</p>
+        <p class="draft-note">Draft — confirm spellings with Mike/Erica. Names may still get small tweaks.</p>
+
+        <article class="guest-group">
+          <p class="g-num">Group 1</p>
+          <h3>Core</h3>
+          <div class="guest-chips">
+            <span>Ethan</span><span>Mike</span><span>Erica</span><span>Savannah</span>
+          </div>
+        </article>
+        <article class="guest-group">
+          <p class="g-num">Group 2</p>
+          <h3>Shaylin’s crew</h3>
+          <div class="guest-chips">
+            <span>Shaylin</span><span>Aurora</span><span>Aiden</span><span>Amy</span>
+          </div>
+        </article>
+        <article class="guest-group">
+          <p class="g-num">Group 3</p>
+          <h3>Everly’s crew</h3>
+          <div class="guest-chips">
+            <span>Everly</span><span>Garrett</span><span>Lindsey</span>
+          </div>
+        </article>
+        <article class="guest-group">
+          <p class="g-num">Group 4</p>
+          <h3>Miley’s crew</h3>
+          <div class="guest-chips">
+            <span>Miley</span><span>Mason</span><span>Michael</span><span>Marjorie</span><span class="note-chip">Marge OK</span><span>Vern</span>
+          </div>
+        </article>
+        <article class="guest-group">
+          <p class="g-num">Group 5</p>
+          <h3>Sandy &amp; Dennis</h3>
+          <div class="guest-chips">
+            <span>Sandy</span><span>Dennis</span>
+          </div>
+        </article>
+        <article class="guest-group">
+          <p class="g-num">Group 6</p>
+          <h3>Regina’s crew</h3>
+          <div class="guest-chips">
+            <span>Regina</span><span>Cece</span><span>Selah</span><span>Jordan</span><span>Mia</span>
+          </div>
+        </article>
+        <article class="guest-group">
+          <p class="g-num">Group 7</p>
+          <h3>Brian &amp; Jacqueline</h3>
+          <div class="guest-chips">
+            <span>Brian</span><span>Jacqueline</span>
+          </div>
+        </article>
+        <article class="guest-group">
+          <p class="g-num">Group 8</p>
+          <h3>Angie &amp; Linley</h3>
+          <div class="guest-chips">
+            <span>Angie</span><span>Linley</span>
+          </div>
+        </article>
+      </section>
+
+      <section id="arrivals">
+        <p class="sec-kicker subhead-split">Getting there</p>
+        <h2>Arrivals &amp; departures</h2>
+        <p class="lead">Provisional — times and bookings still shifting. No flight numbers yet.</p>
+        <p class="draft-note">Provisional schedule. Unknowns marked clearly. Do not treat as final.</p>
+
+        <article class="arrive-card">
+          <p class="a-who">Ethan, Mike, Erica, Savannah</p>
+          <p class="a-row"><span class="tag">In</span><span>Sat Dec 12 · ~3:00&nbsp;pm · Cancún</span></p>
+          <p class="a-row"><span class="tag out">Out</span><span>Sun Dec 20 · ~5:09&nbsp;pm</span></p>
+        </article>
+        <article class="arrive-card">
+          <p class="a-who">Shaylin, Aurora, Aiden, Amy</p>
+          <p class="a-row"><span class="tag open">Status</span><span>Booked? · times open</span></p>
+          <p class="a-meta">Arrival and departure times TBD.</p>
+        </article>
+        <article class="arrive-card">
+          <p class="a-who">Everly, Garrett, Lindsey</p>
+          <p class="a-row"><span class="tag">In</span><span>Mon Dec 14 · ~11:00&nbsp;am <em>(provisional)</em></span></p>
+          <p class="a-row"><span class="tag out">Out</span><span>Sun Dec 20 · ~11:00&nbsp;am <em>(provisional)</em></span></p>
+        </article>
+        <article class="arrive-card">
+          <p class="a-who">Miley, Mason, Michael, Marjorie, Vern</p>
+          <p class="a-row"><span class="tag">In</span><span>Mon Dec 14 · ~11:00&nbsp;am <em>(provisional)</em></span></p>
+          <p class="a-row"><span class="tag out">Out</span><span>Sun Dec 20 · ~11:00&nbsp;am <em>(provisional)</em></span></p>
+        </article>
+        <article class="arrive-card">
+          <p class="a-who">Sandy &amp; Dennis</p>
+          <p class="a-row"><span class="tag open">Status</span><span>Not booked yet</span></p>
+          <p class="a-meta">Arrival and departure unknown.</p>
+        </article>
+        <article class="arrive-card">
+          <p class="a-who">Regina, Cece, Selah, Jordan, Mia</p>
+          <p class="a-row"><span class="tag">In</span><span>Booked · arrival time TBD</span></p>
+          <p class="a-meta">Departure TBD.</p>
+        </article>
+        <article class="arrive-card">
+          <p class="a-who">Brian &amp; Jacqueline</p>
+          <p class="a-row"><span class="tag">In</span><span>Thu Dec 17 · Dallas ~5:00&nbsp;am → Cancún ~9:30&nbsp;am</span></p>
+          <p class="a-row"><span class="tag out">Out</span><span>Sun Dec 20</span></p>
+          <p class="a-meta">Departure time TBD. No flight numbers listed.</p>
+        </article>
+        <article class="arrive-card">
+          <p class="a-who">Angie &amp; Linley</p>
+          <p class="a-row"><span class="tag">In</span><span>Thu Dec 17 · same wave as Brian &amp; Jacqueline (~Dallas 5am → Cancún ~9:30am)</span></p>
+          <p class="a-row"><span class="tag out">Out</span><span>Sat Dec 19</span></p>
+          <p class="a-meta">Departure time TBD. No flight numbers listed.</p>
+        </article>
+      </section>
+    </div><!-- /panel-guests -->
+
+    <div id="panel-times" class="view-panel" role="tabpanel" aria-labelledby="tab-times" hidden>
+      <section id="event-times">
+        <p class="sec-kicker">Schedule</p>
+        <h2>Event times</h2>
+        <p class="lead">What we know so far — locked vs still TBD. Ceremony time locks when the Wedding Form is finalized.</p>
+        <p class="draft-note">Provisional where marked. Restaurant names and some clock times are placeholders until Mike fills them in.</p>
+
+        <article class="arrive-card">
+          <p class="label">Night before · Thu Dec 17</p>
+          <p class="a-who">His &amp; hers dinners</p>
+          <p class="a-row"><span class="tag open">Guys</span><span>Restaurant TBD · time TBD</span></p>
+          <p class="a-row"><span class="tag open">Hers</span><span>Restaurant TBD · time TBD</span></p>
+          <p class="a-meta">Vow-renewal night-before dinners (not a big party). Package allows a rehearsal dinner for up to 10 people at 6:00 or 7:00&nbsp;PM — restaurant and exact seating not locked yet. Mike will fill restaurant + time.</p>
+        </article>
+
+        <article class="arrive-card">
+          <p class="label">Day of · Fri Dec 18</p>
+          <p class="a-who">Ceremony</p>
+          <p class="a-row"><span class="tag">Where</span><span>Ocean Pier Pavilion (jetty / package ceremony)</span></p>
+          <p class="a-row"><span class="tag open">When</span><span>Provisional ~11:00&nbsp;AM — not locked until Wedding Form ceremony time</span></p>
+          <p class="a-meta">Wear notes are on the Main tab (Basics).</p>
+        </article>
+
+        <article class="arrive-card">
+          <p class="label">Day of · Fri Dec 18</p>
+          <p class="a-who">Reception</p>
+          <p class="a-row"><span class="tag">Where</span><span>On the beach after the ceremony</span></p>
+          <p class="a-row"><span class="tag open">When</span><span>After ceremony · exact start TBD</span></p>
+          <p class="a-meta">Exact beach section is chosen once we are on property.</p>
+        </article>
+      </section>
+    </div><!-- /panel-times -->
 
     <footer>
       <p class="sig">See you there</p>
@@ -1393,11 +1710,16 @@
 
   var mapScale = 1;
   var mapFocus = null; // {x,y} percent when focusing a pin
+  var mapTx = 0;
+  var mapTy = 0;
 
   function applyMapTransform() {
     if (!stageEl || !mapEl) return;
     if (mapScale <= 1.001 && !mapFocus) {
+      mapTx = 0;
+      mapTy = 0;
       mapEl.classList.remove("is-zoomed");
+      mapEl.classList.remove("is-panning");
       stageEl.style.transform = "";
       stageEl.style.transformOrigin = "center center";
     } else {
@@ -1407,7 +1729,7 @@
       } else {
         stageEl.style.transformOrigin = "center center";
       }
-      stageEl.style.transform = "scale(" + mapScale + ")";
+      stageEl.style.transform = "translate(" + mapTx + "px," + mapTy + "px) scale(" + mapScale + ")";
     }
     var zin = document.getElementById("map-zoom-in");
     var zout = document.getElementById("map-zoom-out-btn");
@@ -1415,13 +1737,15 @@
     var legacy = document.getElementById("map-zoom-out");
     if (zin) zin.disabled = mapScale >= 2.2;
     if (zout) zout.disabled = mapScale <= 1.001;
-    if (zfull) zfull.disabled = mapScale <= 1.001 && !mapFocus;
+    if (zfull) zfull.disabled = mapScale <= 1.001 && !mapFocus && mapTx === 0 && mapTy === 0;
     if (legacy) legacy.hidden = mapScale <= 1.001;
   }
 
   function resetMapZoom() {
     mapScale = 1;
     mapFocus = null;
+    mapTx = 0;
+    mapTy = 0;
     applyMapTransform();
   }
 
@@ -1433,13 +1757,19 @@
     }
     // Mild focus only — user can +/- from on-map controls
     mapFocus = { x: place.x, y: place.y };
+    mapTx = 0;
+    mapTy = 0;
     if (mapScale < 1.15) mapScale = 1.15;
     applyMapTransform();
   }
 
   function bumpMapZoom(delta) {
     mapScale = Math.max(1, Math.min(2.2, Math.round((mapScale + delta) * 100) / 100));
-    if (mapScale === 1) mapFocus = null;
+    if (mapScale === 1) {
+      mapFocus = null;
+      mapTx = 0;
+      mapTy = 0;
+    }
     applyMapTransform();
   }
 
@@ -1536,6 +1866,100 @@
   if (mapZoomReset) mapZoomReset.addEventListener("click", function () { resetMapZoom(); });
   applyMapTransform();
 
+  // Pan when zoomed (pointer + touch). Threshold so hotspots still click.
+  (function setupMapPan() {
+    if (!mapEl || !stageEl) return;
+    var PAN_THRESHOLD = 6;
+    var dragging = false;
+    var armed = false;
+    var startedOnHotspot = false;
+    var startX = 0, startY = 0;
+    var origTx = 0, origTy = 0;
+    var activeId = null;
+
+    function pointFromEvent(e) {
+      if (e.touches && e.touches.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      if (e.changedTouches && e.changedTouches.length) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+      return { x: e.clientX, y: e.clientY };
+    }
+
+    function onDown(e) {
+      if (mapScale <= 1.001) return;
+      if (e.target && e.target.closest && e.target.closest(".prop-map-tools")) return;
+      // Mouse: left button only
+      if (e.type === "pointerdown" && e.pointerType === "mouse" && e.button !== 0) return;
+      var t = e.target;
+      startedOnHotspot = !!(t && t.closest && t.closest(".hotspot"));
+      var p = pointFromEvent(e);
+      armed = true;
+      dragging = false;
+      startX = p.x;
+      startY = p.y;
+      origTx = mapTx;
+      origTy = mapTy;
+      activeId = e.pointerId != null ? e.pointerId : null;
+      if (e.pointerId != null && mapEl.setPointerCapture) {
+        try { mapEl.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+    }
+
+    function onMove(e) {
+      if (!armed) return;
+      if (activeId != null && e.pointerId != null && e.pointerId !== activeId) return;
+      if (mapScale <= 1.001) return;
+      var p = pointFromEvent(e);
+      var dx = p.x - startX;
+      var dy = p.y - startY;
+      if (!dragging) {
+        if (Math.sqrt(dx * dx + dy * dy) < PAN_THRESHOLD) return;
+        if (startedOnHotspot) {
+          // Still allow pan if user clearly drags off a pin
+        }
+        dragging = true;
+        mapEl.classList.add("is-panning");
+      }
+      e.preventDefault();
+      mapTx = origTx + dx;
+      mapTy = origTy + dy;
+      applyMapTransform();
+    }
+
+    function onUp(e) {
+      if (!armed) return;
+      if (activeId != null && e.pointerId != null && e.pointerId !== activeId) return;
+      armed = false;
+      activeId = null;
+      if (dragging) {
+        dragging = false;
+        mapEl.classList.remove("is-panning");
+        // Suppress the click that would fire after a drag
+        var swallow = function (ev) {
+          ev.stopPropagation();
+          ev.preventDefault();
+          mapEl.removeEventListener("click", swallow, true);
+        };
+        mapEl.addEventListener("click", swallow, true);
+        setTimeout(function () { mapEl.removeEventListener("click", swallow, true); }, 0);
+      }
+    }
+
+    // Prefer Pointer Events; also bind touch for older iOS
+    if (window.PointerEvent) {
+      mapEl.addEventListener("pointerdown", onDown);
+      mapEl.addEventListener("pointermove", onMove);
+      mapEl.addEventListener("pointerup", onUp);
+      mapEl.addEventListener("pointercancel", onUp);
+    } else {
+      mapEl.addEventListener("mousedown", onDown);
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
+      mapEl.addEventListener("touchstart", onDown, { passive: true });
+      mapEl.addEventListener("touchmove", onMove, { passive: false });
+      mapEl.addEventListener("touchend", onUp);
+      mapEl.addEventListener("touchcancel", onUp);
+    }
+  })();
+
   document.querySelectorAll(".js-show-on-map").forEach(function (btn) {
     btn.addEventListener("click", function () {
       selectPlace(btn.getAttribute("data-place"), true);
@@ -1605,7 +2029,6 @@
 })();
 </script>
 <script>
-
   (function () {
     var back = document.getElementById("nav-back");
     var fwd = document.getElementById("nav-forward");
@@ -1615,6 +2038,86 @@
       else window.scrollTo({ top: 0, behavior: "smooth" });
     });
     fwd.addEventListener("click", function () { window.history.forward(); });
+  })();
+
+  (function () {
+    var tabMain = document.getElementById("tab-main");
+    var tabGuests = document.getElementById("tab-guests");
+    var tabTimes = document.getElementById("tab-times");
+    var panelMain = document.getElementById("panel-main");
+    var panelGuests = document.getElementById("panel-guests");
+    var panelTimes = document.getElementById("panel-times");
+    if (!tabMain || !tabGuests || !tabTimes || !panelMain || !panelGuests || !panelTimes) return;
+
+    var tabs = [
+      { id: "main", tab: tabMain, panel: panelMain, hash: "#main" },
+      { id: "guests", tab: tabGuests, panel: panelGuests, hash: "#guests" },
+      { id: "times", tab: tabTimes, panel: panelTimes, hash: "#times" }
+    ];
+
+    function normalizeHash(h) {
+      h = (h || "").replace(/^#/, "").toLowerCase();
+      if (h === "guests" || h === "arrivals" || h === "guests-arrivals") return "guests";
+      if (h === "times" || h === "event-times" || h === "schedule" || h === "events") return "times";
+      if (h === "weekend" || h === "main" || h === "") return "main";
+      if (h === "basics" || h === "where" || h === "property" || h === "dining") return "main";
+      return "main";
+    }
+
+    function showView(view, push) {
+      var active = null;
+      tabs.forEach(function (t) {
+        var on = t.id === view;
+        t.panel.hidden = !on;
+        t.tab.classList.toggle("is-on", on);
+        t.tab.setAttribute("aria-selected", on ? "true" : "false");
+        if (on) active = t;
+      });
+      if (!active) return;
+      var hash = active.hash;
+      if (push) {
+        if (location.hash !== hash) {
+          try { history.pushState({ view: view }, "", hash); }
+          catch (err) { location.hash = hash; }
+        }
+      } else {
+        var cur = (location.hash || "").toLowerCase();
+        if (view === "guests" || view === "times" || cur === "#guests" || cur === "#arrivals" || cur === "#times" || cur === "#event-times" || cur === "#weekend") {
+          if (location.hash !== hash) {
+            try { history.replaceState({ view: view }, "", hash); }
+            catch (err) {}
+          }
+        }
+      }
+      if (view === "guests") {
+        var target = (location.hash || "").toLowerCase();
+        var el = target === "#arrivals" ? document.getElementById("arrivals") : document.getElementById("guests");
+        if (el) setTimeout(function () { el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 40);
+      } else if (view === "times") {
+        var te = document.getElementById("event-times");
+        if (te) setTimeout(function () { window.scrollTo({ top: 0, behavior: "smooth" }); }, 20);
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    tabMain.addEventListener("click", function () { showView("main", true); });
+    tabGuests.addEventListener("click", function () { showView("guests", true); });
+    tabTimes.addEventListener("click", function () { showView("times", true); });
+
+    window.addEventListener("popstate", function () {
+      showView(normalizeHash(location.hash), false);
+    });
+    window.addEventListener("hashchange", function () {
+      showView(normalizeHash(location.hash), false);
+    });
+
+    var initial = normalizeHash(location.hash);
+    showView(initial, false);
+    if (initial === "main" && location.hash && /^#(basics|where|property|dining)$/i.test(location.hash)) {
+      var sec = document.getElementById(location.hash.slice(1));
+      if (sec) setTimeout(function () { sec.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
+    }
   })();
 </script>
 </body>
