@@ -413,66 +413,73 @@
     height: auto;
     vertical-align: middle;
   }
-  @keyframes hotspotPulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(255,255,255,0.95), 0 0 0 7px rgba(232, 74, 128, 0.45), 0 4px 14px rgba(61, 51, 54, 0.35); }
-    50% { box-shadow: 0 0 0 3px rgba(255,255,255,0.95), 0 0 0 12px rgba(232, 74, 128, 0.2), 0 4px 18px rgba(61, 51, 54, 0.4); }
-  }
-  @keyframes hotspotPulseOn {
-    0%, 100% { box-shadow: 0 0 0 4px rgba(255,255,255,1), 0 0 0 10px rgba(255, 196, 64, 0.65), 0 0 22px 6px rgba(255, 170, 40, 0.55); }
-    50% { box-shadow: 0 0 0 4px rgba(255,255,255,1), 0 0 0 16px rgba(255, 196, 64, 0.3), 0 0 28px 8px rgba(255, 170, 40, 0.4); }
-  }
   .hotspot {
     position: absolute;
-    width: 34px;
-    height: 34px;
+    width: 18px;
+    height: 18px;
     margin: 0;
     padding: 0;
-    border: 3px solid #fff;
+    border: 2px solid #fff;
     border-radius: 999px;
-    background: radial-gradient(circle at 35% 30%, #ff7aab 0%, #e84a80 55%, #c2185b 100%);
+    background: #c45a7a;
     color: #fff;
     font-family: "Nunito", system-ui, sans-serif;
-    font-size: 12px;
+    font-size: 0;
     font-weight: 800;
     letter-spacing: 0;
     line-height: 1;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.35);
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.95), 0 0 0 7px rgba(232, 74, 128, 0.45), 0 4px 14px rgba(61, 51, 54, 0.35);
-    animation: hotspotPulse 1.6s ease-in-out infinite;
+    box-shadow: 0 2px 6px rgba(61, 51, 54, 0.35);
     transform: translate(-50%, -50%);
     display: grid;
     place-items: center;
     cursor: pointer;
     z-index: 2;
     -webkit-tap-highlight-color: transparent;
+    animation: none;
   }
   .hotspot.bar-pin {
-    background: radial-gradient(circle at 35% 30%, #5fd4e0 0%, #1f8a9a 55%, #0d5c68 100%);
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.95), 0 0 0 7px rgba(31, 138, 154, 0.5), 0 4px 14px rgba(61, 51, 54, 0.35);
-    animation-name: hotspotPulseBar;
-  }
-  @keyframes hotspotPulseBar {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(255,255,255,0.95), 0 0 0 7px rgba(31, 138, 154, 0.5), 0 4px 14px rgba(61, 51, 54, 0.35); }
-    50% { box-shadow: 0 0 0 3px rgba(255,255,255,0.95), 0 0 0 12px rgba(31, 138, 154, 0.22), 0 4px 18px rgba(61, 51, 54, 0.4); }
+    background: #2a8a96;
   }
   .hotspot:focus-visible {
     outline: 2px solid var(--gold);
-    outline-offset: 3px;
+    outline-offset: 2px;
+  }
+  @keyframes hotspotPulseOn {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(255,255,255,1), 0 0 0 8px rgba(255, 196, 64, 0.7), 0 0 18px 4px rgba(255, 170, 40, 0.5); }
+    50% { box-shadow: 0 0 0 3px rgba(255,255,255,1), 0 0 0 14px rgba(255, 196, 64, 0.28), 0 0 24px 6px rgba(255, 170, 40, 0.35); }
   }
   .hotspot.is-on {
-    width: 44px;
-    height: 44px;
-    font-size: 15px;
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
     background: radial-gradient(circle at 35% 30%, #ffe08a 0%, #ffb020 45%, #e84a80 100%);
-    border-color: #fff;
-    box-shadow: 0 0 0 4px rgba(255,255,255,1), 0 0 0 10px rgba(255, 196, 64, 0.65), 0 0 22px 6px rgba(255, 170, 40, 0.55);
+    border: 3px solid #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+    box-shadow: 0 0 0 3px rgba(255,255,255,1), 0 0 0 8px rgba(255, 196, 64, 0.7), 0 0 18px 4px rgba(255, 170, 40, 0.5);
     animation: hotspotPulseOn 1.1s ease-in-out infinite;
-    z-index: 4;
+    z-index: 5;
   }
   .hotspot.bar-pin.is-on {
     background: radial-gradient(circle at 35% 30%, #b8f4ff 0%, #ffb020 40%, #1f8a9a 100%);
-    box-shadow: 0 0 0 4px rgba(255,255,255,1), 0 0 0 10px rgba(255, 196, 64, 0.65), 0 0 22px 6px rgba(255, 170, 40, 0.55);
-    animation: hotspotPulseOn 1.1s ease-in-out infinite;
+  }
+  .prop-map.is-zoomed {
+    overflow: hidden;
+  }
+  .prop-map.is-zoomed img,
+  .prop-map.is-zoomed .hotspot {
+    /* zoom handled via transform on .prop-map-stage */
+  }
+  .prop-map-stage {
+    position: relative;
+    transform-origin: center center;
+    transition: transform 0.35s ease;
+    will-change: transform;
+  }
+  .prop-map-stage img {
+    display: block;
+    width: 100%;
+    height: auto;
+    vertical-align: middle;
   }
   .prop-wrap { overflow: visible; border: none; background: transparent; }
   .picks {
@@ -688,7 +695,9 @@
 
       <div class="prop-wrap">
         <div class="prop-map" id="prop-map">
-          <img src="assets/property-map-unofficial.jpg?v=3" alt="Unofficial Marina El Cid property layout — tap a pin for a restaurant or bar" width="1274" height="983" />
+          <div class="prop-map-stage" id="prop-map-stage">
+            <img src="assets/property-map-unofficial.jpg?v=5" alt="Unofficial Marina El Cid property layout — tap a pin for a restaurant or bar" width="1274" height="983" />
+          </div>
         </div>
       </div>
 
@@ -1101,6 +1110,22 @@
     }
     return bits.join(" ");
   }
+
+  function zoomToPlace(place) {
+    if (!stageEl || !mapEl) return;
+    if (!place || place.x == null || place.y == null) {
+      mapEl.classList.remove("is-zoomed");
+      stageEl.style.transform = "";
+      return;
+    }
+    var scale = 1.85;
+    // Percent coords → shift so pin sits near center of viewport
+    var tx = (50 - place.x) * scale;
+    var ty = (50 - place.y) * scale;
+    mapEl.classList.add("is-zoomed");
+    stageEl.style.transform = "scale(" + scale + ") translate(" + tx + "%, " + ty + "%)";
+  }
+
   function selectPlace(id, scrollMap) {
     var place = PLACES[id];
     if (!place) return;
@@ -1137,6 +1162,7 @@
   }
 
   var mapEl = document.getElementById("prop-map");
+  var stageEl = document.getElementById("prop-map-stage");
   var eatBox = document.getElementById("picks-eat");
   var drinkBox = document.getElementById("picks-drink");
   Object.keys(PLACES).forEach(function (id) {
@@ -1159,7 +1185,7 @@
       btn.textContent = place.letter;
       btn.setAttribute("aria-label", place.name);
       btn.addEventListener("click", function () { selectPlace(id, false); });
-      mapEl.appendChild(btn);
+      stageEl.appendChild(btn);
     }
   });
 
