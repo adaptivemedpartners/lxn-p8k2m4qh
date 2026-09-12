@@ -523,6 +523,7 @@
   .prop-map.is-zoomed .hotspot {
     /* zoom handled via transform on .prop-map-stage */
   }
+  .map-zoom-bar .btn-ghost { font-size: 12.5px; }
   .prop-map-stage {
     position: relative;
     transform-origin: center center;
@@ -809,6 +810,9 @@
         </div>
       </div>
 
+      <p class="map-zoom-bar" style="margin:8px 0 0;display:flex;justify-content:flex-end">
+        <button type="button" class="btn-ghost" id="map-zoom-out" hidden>Zoom out · full map</button>
+      </p>
       <div class="pin-sheet" id="pin-sheet" hidden>
         <p class="pin-name" id="pin-name"></p>
         <p class="pin-where" id="pin-where"></p>
@@ -1349,19 +1353,28 @@
     return bits.join(" ");
   }
 
+  function resetMapZoom() {
+    if (!stageEl || !mapEl) return;
+    mapEl.classList.remove("is-zoomed");
+    stageEl.style.transform = "";
+    stageEl.style.transformOrigin = "center center";
+    var zout = document.getElementById("map-zoom-out");
+    if (zout) zout.hidden = true;
+  }
+
   function zoomToPlace(place) {
     if (!stageEl || !mapEl) return;
     if (!place || place.x == null || place.y == null) {
-      mapEl.classList.remove("is-zoomed");
-      stageEl.style.transform = "";
+      resetMapZoom();
       return;
     }
-    var scale = 1.85;
-    // Percent coords → shift so pin sits near center of viewport
-    var tx = (50 - place.x) * scale;
-    var ty = (50 - place.y) * scale;
+    // Mild zoom toward the pin — keep campus context, not a tight crop
+    var scale = 1.28;
+    stageEl.style.transformOrigin = place.x + "% " + place.y + "%";
+    stageEl.style.transform = "scale(" + scale + ")";
     mapEl.classList.add("is-zoomed");
-    stageEl.style.transform = "scale(" + scale + ") translate(" + tx + "%, " + ty + "%)";
+    var zout = document.getElementById("map-zoom-out");
+    if (zout) zout.hidden = false;
   }
 
   function selectPlace(id, scrollMap) {
@@ -1444,6 +1457,11 @@
       });
     });
   });
+
+  var zoomOutBtn = document.getElementById("map-zoom-out");
+  if (zoomOutBtn) {
+    zoomOutBtn.addEventListener("click", function () { resetMapZoom(); });
+  }
 
   document.querySelectorAll(".js-show-on-map").forEach(function (btn) {
     btn.addEventListener("click", function () {
