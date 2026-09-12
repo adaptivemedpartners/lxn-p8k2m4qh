@@ -454,6 +454,37 @@
   }
 
   /* Interactive property map + walk actions */
+
+  .prop-map-tools {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .prop-map-tools button {
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.9);
+    background: rgba(255, 253, 251, 0.95);
+    color: var(--dusty);
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 4px 14px rgba(61, 51, 54, 0.18);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .prop-map-tools button:active { transform: scale(0.96); }
+  .prop-map-tools button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
   .prop-map {
     position: relative;
     border-radius: 16px;
@@ -469,8 +500,8 @@
   }
   .hotspot {
     position: absolute;
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     margin: 0;
     padding: 0;
     border: 2px solid #fff;
@@ -499,17 +530,17 @@
     outline-offset: 2px;
   }
   @keyframes hotspotPulseOn {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(255,255,255,1), 0 0 0 8px rgba(255, 196, 64, 0.7), 0 0 18px 4px rgba(255, 170, 40, 0.5); }
-    50% { box-shadow: 0 0 0 3px rgba(255,255,255,1), 0 0 0 14px rgba(255, 196, 64, 0.28), 0 0 24px 6px rgba(255, 170, 40, 0.35); }
+    0%, 100% { box-shadow: 0 0 0 2px rgba(255,255,255,1), 0 0 0 5px rgba(255, 196, 64, 0.55), 0 0 12px 2px rgba(255, 170, 40, 0.4); }
+    50% { box-shadow: 0 0 0 2px rgba(255,255,255,1), 0 0 0 8px rgba(255, 196, 64, 0.28), 0 0 14px 3px rgba(255, 170, 40, 0.28); }
   }
   .hotspot.is-on {
-    width: 20px;
-    height: 20px;
-    font-size: 9px;
+    width: 14px;
+    height: 14px;
+    font-size: 0;
     background: radial-gradient(circle at 35% 30%, #ffe08a 0%, #ffb020 45%, #e84a80 100%);
     border: 2px solid #fff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.35);
-    box-shadow: 0 0 0 3px rgba(255,255,255,1), 0 0 0 8px rgba(255, 196, 64, 0.7), 0 0 18px 4px rgba(255, 170, 40, 0.5);
+    text-shadow: none;
+    box-shadow: 0 0 0 2px rgba(255,255,255,1), 0 0 0 5px rgba(255, 196, 64, 0.55), 0 0 12px 2px rgba(255, 170, 40, 0.4);
     animation: hotspotPulseOn 1.1s ease-in-out infinite;
     z-index: 5;
   }
@@ -806,6 +837,11 @@
 
       <div class="prop-wrap">
         <div class="prop-map" id="prop-map">
+          <div class="prop-map-tools" aria-label="Map zoom">
+            <button type="button" id="map-zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
+            <button type="button" id="map-zoom-out-btn" title="Zoom out" aria-label="Zoom out">−</button>
+            <button type="button" id="map-zoom-reset" title="Full map" aria-label="Full map" style="font-size:11px;font-weight:800;letter-spacing:0.02em">FULL</button>
+          </div>
           <div class="prop-map-stage" id="prop-map-stage">
             <img src="assets/property-map-complex.jpg?v=2" alt="El Cid Puerto Morelos complex map — Marina, Ventus, and Ventus Ha’ — tap a pin for a restaurant or bar" width="1800" height="1379" />
           </div>
@@ -1355,13 +1391,38 @@
     return bits.join(" ");
   }
 
-  function resetMapZoom() {
+  var mapScale = 1;
+  var mapFocus = null; // {x,y} percent when focusing a pin
+
+  function applyMapTransform() {
     if (!stageEl || !mapEl) return;
-    mapEl.classList.remove("is-zoomed");
-    stageEl.style.transform = "";
-    stageEl.style.transformOrigin = "center center";
-    var zout = document.getElementById("map-zoom-out");
-    if (zout) zout.hidden = true;
+    if (mapScale <= 1.001 && !mapFocus) {
+      mapEl.classList.remove("is-zoomed");
+      stageEl.style.transform = "";
+      stageEl.style.transformOrigin = "center center";
+    } else {
+      mapEl.classList.add("is-zoomed");
+      if (mapFocus) {
+        stageEl.style.transformOrigin = mapFocus.x + "% " + mapFocus.y + "%";
+      } else {
+        stageEl.style.transformOrigin = "center center";
+      }
+      stageEl.style.transform = "scale(" + mapScale + ")";
+    }
+    var zin = document.getElementById("map-zoom-in");
+    var zout = document.getElementById("map-zoom-out-btn");
+    var zfull = document.getElementById("map-zoom-reset");
+    var legacy = document.getElementById("map-zoom-out");
+    if (zin) zin.disabled = mapScale >= 2.2;
+    if (zout) zout.disabled = mapScale <= 1.001;
+    if (zfull) zfull.disabled = mapScale <= 1.001 && !mapFocus;
+    if (legacy) legacy.hidden = mapScale <= 1.001;
+  }
+
+  function resetMapZoom() {
+    mapScale = 1;
+    mapFocus = null;
+    applyMapTransform();
   }
 
   function zoomToPlace(place) {
@@ -1370,13 +1431,16 @@
       resetMapZoom();
       return;
     }
-    // Mild zoom toward the pin — keep campus context, not a tight crop
-    var scale = 1.12;
-    stageEl.style.transformOrigin = place.x + "% " + place.y + "%";
-    stageEl.style.transform = "scale(" + scale + ")";
-    mapEl.classList.add("is-zoomed");
-    var zout = document.getElementById("map-zoom-out");
-    if (zout) zout.hidden = false;
+    // Mild focus only — user can +/- from on-map controls
+    mapFocus = { x: place.x, y: place.y };
+    if (mapScale < 1.15) mapScale = 1.15;
+    applyMapTransform();
+  }
+
+  function bumpMapZoom(delta) {
+    mapScale = Math.max(1, Math.min(2.2, Math.round((mapScale + delta) * 100) / 100));
+    if (mapScale === 1) mapFocus = null;
+    applyMapTransform();
   }
 
   function selectPlace(id, scrollMap) {
@@ -1464,6 +1528,13 @@
   if (zoomOutBtn) {
     zoomOutBtn.addEventListener("click", function () { resetMapZoom(); });
   }
+  var mapZoomIn = document.getElementById("map-zoom-in");
+  var mapZoomOutBtn = document.getElementById("map-zoom-out-btn");
+  var mapZoomReset = document.getElementById("map-zoom-reset");
+  if (mapZoomIn) mapZoomIn.addEventListener("click", function () { bumpMapZoom(0.2); });
+  if (mapZoomOutBtn) mapZoomOutBtn.addEventListener("click", function () { bumpMapZoom(-0.2); });
+  if (mapZoomReset) mapZoomReset.addEventListener("click", function () { resetMapZoom(); });
+  applyMapTransform();
 
   document.querySelectorAll(".js-show-on-map").forEach(function (btn) {
     btn.addEventListener("click", function () {
