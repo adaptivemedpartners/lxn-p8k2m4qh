@@ -25,7 +25,9 @@ button.pri{background:var(--dusty);border-color:var(--dusty);color:#fff}
 .seat{min-height:46px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;text-align:center;padding:4px;font-size:.85rem;word-break:break-word}
 .seat.empty{color:#bfb2b5;font-style:italic}
 .edit .seat{cursor:pointer;border-style:dashed;border-color:var(--gold)}
-.seat input{width:100%;border:0;background:transparent;font:inherit;text-align:center;outline:none}
+.seat input{width:100%;border:0;background:transparent;font:inherit;text-align:center;outline:none;color:var(--ink)}
+.seat input::placeholder{color:#b9a9ad;font-style:italic}
+.edit .seat:focus-within{border-style:solid;border-color:var(--dusty);background:#fff}
 .head{display:grid;grid-template-columns:auto 1fr 34px 1fr;gap:6px;margin:8px 0 4px;text-align:center;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .status{text-align:center;font-size:.85rem;color:var(--muted);min-height:1.2em}
 .count{text-align:center;font-family:"Cormorant Garamond",serif;font-size:1.1rem;margin-top:12px}
@@ -35,6 +37,7 @@ button.pri{background:var(--dusty);border-color:var(--dusty);color:#fff}
 <a class="back" href="./">← Back to the guest page</a>
 <h1>Ceremony Seating</h1><p class="sub">Mike &amp; Erica · December 18 · Hotel Marina El Cid</p>
 <div class="bar" id="bar"><button id="editBtn">Edit seats</button><button id="addRow" hidden>+ Add row</button><button id="shareBtn">Copy share link</button></div>
+<div id="passBox" hidden style="text-align:center;margin:0 0 12px"><input id="passIn" type="password" placeholder="Edit passcode" style="font:inherit;padding:8px 14px;border-radius:999px;border:2px solid var(--dusty);width:180px"> <button class="pri" id="passGo">Unlock</button></div>
 <div class="status" id="status">Loading…</div>
 <div class="front"><span class="arch">🌸</span><h2>Up front</h2>
 <div class="couple"><span class="pill">Savanah</span><span class="pill c">Erica</span><span class="pill c">Mike</span><span class="pill">Ethan</span></div></div>
@@ -45,23 +48,24 @@ button.pri{background:var(--dusty);border-color:var(--dusty);color:#fff}
 <script>
 const URL_="https://pmbehaioxviyhdmmczfl.supabase.co/rest/v1/rpc/",KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtYmVoYWlveHZpeWhkbW1jemZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxODg4NjAsImV4cCI6MjEwMjc2NDg2MH0.H6u8tZ3lnkeOOfK1bwlQ5OIKkNbLpAmfi7NykSE_vIE";
 const rpc=(f,b)=>fetch(URL_+f,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify(b||{})}).then(async r=>{if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||r.status);const t=await r.text();return t?JSON.parse(t):null});
-let S={rows:6,seats:{}},pass=sessionStorage.getItem("vowSeatPass")||"",editing=false;
+let S={rows:6,seats:{}},pass=localStorage.getItem("vowSeatPass")||"",editing=false;
 const $=id=>document.getElementById(id),st=m=>$("status").textContent=m;
 function render(){const R=$("rows");R.innerHTML="";R.parentElement.classList.toggle("edit",editing);document.body.classList.toggle("edit",editing);let filled=0;
 for(let r=1;r<=S.rows;r++){const n=document.createElement("span");n.className="rn";n.textContent=r;R.append(n);
  ["L","R"].forEach((s,i)=>{const side=document.createElement("div");side.className="side";
-  for(let c=1;c<=2;c++){const k=`${r}${s}${c}`,v=(S.seats[k]||"").trim();if(v)filled++;const d=document.createElement("div");d.className="seat"+(v?"":" empty");d.textContent=v||(editing?"tap to add":"·");d.dataset.k=k;if(editing)d.onclick=()=>edit(d);side.append(d)}
+  for(let c=1;c<=2;c++){const k=`${r}${s}${c}`,v=(S.seats[k]||"").trim();if(v)filled++;const d=document.createElement("div");d.className="seat"+(v?"":" empty");d.dataset.k=k;if(editing){d.classList.remove("empty");const i=document.createElement("input");i.value=v;i.maxLength=80;i.placeholder="Type name";i.setAttribute("aria-label","Row "+r+" "+(s=="L"?"left":"right")+" seat "+c);i.onblur=()=>saveSeat(k,i);i.onkeydown=e=>{if(e.key==="Enter")i.blur()};d.append(i)}else d.textContent=v||"·";side.append(d)}
   R.append(side);if(i==0){const a=document.createElement("div");a.className="aisle";R.append(a)}});}
 $("count").textContent=`${filled} of ${S.rows*4} seats named`;}
-function edit(d){if(d.querySelector("input"))return;const k=d.dataset.k,i=document.createElement("input");i.value=S.seats[k]||"";i.maxLength=80;d.textContent="";d.classList.remove("empty");d.append(i);i.focus();
- let done=false;const save=async()=>{if(done)return;done=true;const v=i.value.trim();if(v===(S.seats[k]||"")){render();return}S.seats[k]=v;render();st("Saving…");
-  try{await rpc("vow_seat_set",{p:pass,k,n:v});st("Saved ✓")}catch(e){st("Save failed: "+e.message)}};
- i.onblur=save;i.onkeydown=e=>{if(e.key==="Enter")i.blur();if(e.key==="Escape"){done=true;render()}}}
+async function saveSeat(k,i){const v=i.value.trim();if(v===(S.seats[k]||""))return;S.seats[k]=v;st("Saving…");
+ try{await rpc("vow_seat_set",{p:pass,k,n:v});st("Saved ✓");const f=Object.values(S.seats).filter(x=>(x||"").trim()).length;$("count").textContent=`${f} of ${S.rows*4} seats named`}catch(e){st("Save failed: "+e.message)}}
 async function load(){try{S=await rpc("vow_seating_get");if(!editing)st("");render()}catch(e){st("Couldn't load seating: "+e.message)}}
-$("editBtn").onclick=async()=>{if(editing){editing=false;$("editBtn").textContent="Edit seats";$("addRow").hidden=true;render();st("View mode");return}
- if(!pass||!(await rpc("vow_seating_check",{p:pass}))){pass=prompt("Edit passcode:")||"";if(!(await rpc("vow_seating_check",{p:pass}))){pass="";st("Wrong passcode");return}sessionStorage.setItem("vowSeatPass",pass)}
- editing=true;$("editBtn").textContent="Done editing";$("editBtn").className="pri";$("addRow").hidden=false;await load();st("Edit mode: tap a seat to type a name")};
+async function enterEdit(){editing=true;$("passBox").hidden=true;$("editBtn").textContent="Done editing";$("editBtn").className="pri";$("addRow").hidden=false;await load();st("Edit mode: tap any seat and type a name")}
+$("passGo").onclick=async()=>{const p=$("passIn").value;if(await rpc("vow_seating_check",{p})){pass=p;localStorage.setItem("vowSeatPass",p);enterEdit()}else st("Wrong passcode, try again")};
+$("passIn").onkeydown=e=>{if(e.key==="Enter")$("passGo").click()};
+$("editBtn").onclick=async()=>{if(editing){document.activeElement?.blur();editing=false;$("editBtn").textContent="Edit seats";$("editBtn").className="";$("addRow").hidden=true;render();st("View mode");return}
+ if(pass&&await rpc("vow_seating_check",{p:pass}))return enterEdit();pass="";$("passBox").hidden=false;$("passIn").focus();st("Enter the passcode to edit (asked once per device)")};
 $("addRow").onclick=async()=>{try{await rpc("vow_seating_rows",{p:pass,r:S.rows+1});S.rows++;render();st("Row added ✓")}catch(e){st("Couldn't add row: "+e.message)}};
 $("shareBtn").onclick=()=>{const u=location.href.split("#")[0].split("?")[0];navigator.clipboard?.writeText(u).then(()=>st("Link copied: "+u),()=>prompt("Share this link:",u))};
+if(pass&&location.hash=="#edit")rpc("vow_seating_check",{p:pass}).then(ok=>ok&&enterEdit());
 load();setInterval(()=>{if(!editing)load()},30000);
 </script></body></html>
