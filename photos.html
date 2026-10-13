@@ -25,6 +25,11 @@ h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-align:center;marg
 .cam{position:relative;background:#000;border-radius:18px;overflow:hidden;aspect-ratio:3/4;max-height:68vh;margin:0 auto 10px}.cam video{width:100%;height:100%;object-fit:cover;display:block}.cam.mirror video{transform:scaleX(-1)}
 .shut{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);width:76px;height:76px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,.35);cursor:pointer}.shut:active{background:#fff}
 .cb{position:absolute;bottom:28px;width:50px;height:50px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:1.4rem;cursor:pointer}.cb.flip{right:18px}.cb.torch{left:18px}.cb.on{background:#f5d76e;color:#000}
+.zbar{position:absolute;bottom:108px;left:50%;transform:translateX(-50%);display:flex;gap:6px;background:rgba(0,0,0,.35);border-radius:99px;padding:4px}
+.zbar button{font:inherit;font-size:.8rem;font-weight:700;width:40px;height:40px;border-radius:50%;border:0;background:rgba(0,0,0,.4);color:#fff;cursor:pointer}.zbar button.on{background:#fff;color:#000}
+.focus{position:absolute;width:70px;height:70px;margin:-35px 0 0 -35px;border:2px solid #f5d76e;border-radius:12px;pointer-events:none;opacity:0;transition:opacity .4s}
+.zlab{position:absolute;top:50px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.5);color:#fff;border-radius:99px;padding:2px 10px;font-size:.8rem;opacity:0;transition:opacity .3s}
+.cam video{touch-action:none;transform-origin:center}
 .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
 .qstat{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);color:#fff;border-radius:99px;padding:4px 12px;font-size:.85rem}
 .camname{position:absolute;top:10px;left:10px;right:calc(10px + 9.5em)}.qstat{max-width:9em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.8rem}.camname input{width:100%;font:inherit;font-size:.85rem;border:0;border-radius:99px;padding:5px 12px;background:rgba(255,255,255,.85)}
@@ -47,7 +52,7 @@ h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-align:center;marg
 <a class="back" href="./">← Back to the guest page</a>
 <h1>Share Your Photos</h1><p class="sub">Mike &amp; Erica · December 18</p>
 <div class="tabs"><button id="tCam">📸 Camera</button><button id="tGal">🖼 See &amp; Download Photos</button></div>
-<div id="camView"><div class="cam" id="cam"><video id="vid" playsinline muted autoplay></video><div class="flash" id="fl"></div>
+<div id="camView"><div class="cam" id="cam"><video id="vid" playsinline muted autoplay></video><div class="flash" id="fl"></div><div class="focus" id="foc"></div><div class="zlab" id="zlab"></div><div class="zbar" id="zbar"></div>
 <div class="camname"><input id="who2" maxlength="60" placeholder="Your name (optional)"/></div><div class="qstat" id="qs">0 uploaded ✓</div>
 <button class="cb torch" id="torch" hidden aria-label="Flash">⚡</button><button class="shut" id="shut" aria-label="Take photo"></button><button class="cb flip" id="flip" aria-label="Flip camera">🔄</button></div>
 <details class="camtags" id="camTagsBox"><summary id="camTagsSum">👥 Tag who’s in your next photos</summary><div id="camTags"></div></details>
@@ -144,11 +149,34 @@ function setMode(m){mode=m;$("camView").hidden=m!=="cam";$("tCam").classList.tog
  history.replaceState(null,"",m==="cam"?location.pathname:"?view=gallery#gallery");if(m==="cam")startCam();else{stopCam();}}
 $("tCam").onclick=()=>setMode("cam");$("tGal").onclick=()=>{setMode("gal");$("gallery").scrollIntoView({behavior:"smooth"})};$("seeBig").onclick=$("tGal").onclick;
 function stopCam(){stream&&stream.getTracks().forEach(t=>t.stop());stream=null}
+let caps={},hwZoom=false,zoom=1,zMin=1,zMax=4,zTimer=0;
 async function startCam(){stopCam();try{if(!navigator.mediaDevices?.getUserMedia)throw new Error("unsupported");
- stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:4032},height:{ideal:3024}},audio:false});
+ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:4096},height:{ideal:3072}},audio:false});
  $("vid").srcObject=stream;track=stream.getVideoTracks()[0];$("cam").classList.toggle("mirror",facing==="user");
- const caps=track.getCapabilities?.()||{};$("torch").hidden=!caps.torch;torchOn=false;$("torch").classList.remove("on");$("camMsg").textContent="Tap the circle to take a photo. It uploads right away."}
+ caps=track.getCapabilities?.()||{};$("torch").hidden=!caps.torch;torchOn=false;$("torch").classList.remove("on");
+ // ask for the sensor's max resolution when the browser exposes it
+ if(caps.width?.max&&caps.height?.max){try{await track.applyConstraints({width:{ideal:caps.width.max},height:{ideal:caps.height.max}})}catch(e){}}
+ hwZoom=!!caps.zoom;zMin=hwZoom?caps.zoom.min:1;zMax=hwZoom?Math.min(caps.zoom.max,10):4;zoom=hwZoom?Math.max(zMin,Math.min(1,zMax)):1;setZoom(zoom,true);zoomButtons();
+ $("camMsg").textContent="Tap the circle to take a photo. It uploads right away."}
  catch(e){$("cam").hidden=true;$("camMsg").innerHTML='Camera not available here. <button class="big" id="fb" style="margin-top:10px">📷 Take or choose photos</button>';$("fb").onclick=()=>$("fileCap").click()}}
+function zoomButtons(){const z=$("zbar");z.innerHTML="";[.5,1,2,3,5].filter(l=>l>=zMin-1e-6&&l<=zMax+1e-6).forEach(l=>{const bt=document.createElement("button");bt.textContent=(l<1?".5":l)+"×";bt.dataset.z=l;bt.onclick=()=>setZoom(l);z.append(bt)});markZoom()}
+function markZoom(){[...$("zbar").children].forEach(bt=>bt.classList.toggle("on",Math.abs(+bt.dataset.z-zoom)<.05))}
+async function setZoom(v,quiet){zoom=Math.max(zMin,Math.min(zMax,v));
+ if(hwZoom){try{await track.applyConstraints({advanced:[{zoom}]})}catch(e){}$("vid").style.transform=""}
+ else $("vid").style.transform="scale("+zoom+")";
+ markZoom();if(!quiet){$("zlab").textContent=zoom.toFixed(1)+"×";$("zlab").style.opacity=1;clearTimeout(zTimer);zTimer=setTimeout(()=>$("zlab").style.opacity=0,900)}}
+// pinch to zoom
+let pinch=null;const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+$("vid").addEventListener("touchstart",e=>{if(e.touches.length===2){pinch={d:dist(e.touches),z:zoom};e.preventDefault()}},{passive:false});
+$("vid").addEventListener("touchmove",e=>{if(pinch&&e.touches.length===2){e.preventDefault();setZoom(pinch.z*dist(e.touches)/pinch.d)}},{passive:false});
+$("vid").addEventListener("touchend",e=>{if(e.touches.length<2)setTimeout(()=>pinch=null,50)});
+// tap to focus (where the camera supports points of interest)
+$("vid").addEventListener("click",async e=>{if(pinch)return;const rc=$("vid").getBoundingClientRect();let x=(e.clientX-rc.left)/rc.width,y=(e.clientY-rc.top)/rc.height;if(facing==="user")x=1-x;
+ const f=$("foc");f.style.left=(e.clientX-rc.left)+"px";f.style.top=(e.clientY-rc.top)+"px";f.style.opacity=1;setTimeout(()=>f.style.opacity=0,800);
+ const adv={};if(caps.pointsOfInterest!==undefined||"pointsOfInterest" in (track.getSettings?.()||{}))adv.pointsOfInterest=[{x,y}];
+ const fm=caps.focusMode||[];if(fm.includes("single-shot"))adv.focusMode="single-shot";else if(fm.includes("continuous"))adv.focusMode="continuous";
+ if(caps.exposureMode?.includes("continuous"))adv.exposureMode="continuous";
+ if(Object.keys(adv).length){try{await track.applyConstraints({advanced:[adv]})}catch(err){}}});
 $("fileCap").onchange=e=>{$("file").onchange({target:e.target})};
 $("flip").onclick=()=>{facing=facing==="user"?"environment":"user";startCam()};
 $("torch").onclick=async()=>{torchOn=!torchOn;try{await track.applyConstraints({advanced:[{torch:torchOn}]});$("torch").classList.toggle("on",torchOn)}catch(e){torchOn=false}};
@@ -160,10 +188,16 @@ async function drain(){if(busy)return;busy=true;try{const items=await tx("readon
  for(const it of items){try{const path="guests/"+it.ts+"-"+Math.random().toString(36).slice(2,8)+".jpg";await put(path,it.blob,()=>{});await rpc("vow_photo_add",{path,uploader:it.who,tags:it.tags||[]});
   await tx("readwrite",s=>s.delete(it.id));done++;localStorage.setItem("vowCamDone",done);pending--;qs()}catch(e){break}}}finally{busy=false}if(pending)setTimeout(drain,8000);else load()}
 addEventListener("online",drain);
-$("shut").onclick=async()=>{const v=$("vid");if(!v.videoWidth)return;const s=Math.min(1,3000/Math.max(v.videoWidth,v.videoHeight)),c=document.createElement("canvas");
- c.width=Math.round(v.videoWidth*s);c.height=Math.round(v.videoHeight*s);const g=c.getContext("2d");if(facing==="user"){g.translate(c.width,0);g.scale(-1,1)}g.drawImage(v,0,0,c.width,c.height);
- $("fl").style.opacity=.9;setTimeout(()=>$("fl").style.opacity=0,120);navigator.vibrate?.(30);
- const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.88));await tx("readwrite",s=>s.add({blob,who:$("who").value.trim(),tags:camTags.slice(),ts:Date.now()}));pending++;qs();drain()};
+async function grab(){const v=$("vid");
+ // Full sensor photo where supported (Android Chrome), unless digital zoom is on
+ if(window.ImageCapture&&(hwZoom||zoom<=1.01)){try{const ic=new ImageCapture(track);const o={};if(torchOn&&(await ic.getPhotoCapabilities()).fillLightMode?.includes("flash"))o.fillLightMode="flash";
+   const bl=await ic.takePhoto(o);if(bl&&bl.size>0&&bl.size<14.5*1024*1024)return bl}catch(e){}}
+ // Otherwise: full-resolution video frame, upright as shown, with digital zoom cropped in
+ const W=v.videoWidth,H=v.videoHeight,z=hwZoom?1:zoom,cw=W/z,ch=H/z,c=document.createElement("canvas");c.width=Math.round(cw);c.height=Math.round(ch);
+ c.getContext("2d").drawImage(v,(W-cw)/2,(H-ch)/2,cw,ch,0,0,c.width,c.height);
+ let q=.92,bl=await new Promise(r=>c.toBlob(r,"image/jpeg",q));while(bl&&bl.size>14.5*1024*1024&&q>.5){q-=.15;bl=await new Promise(r=>c.toBlob(r,"image/jpeg",q))}return bl}
+$("shut").onclick=async()=>{if(!$("vid").videoWidth)return;$("fl").style.opacity=.9;setTimeout(()=>$("fl").style.opacity=0,120);navigator.vibrate?.(30);
+ const blob=await grab();if(!blob)return;await tx("readwrite",s=>s.add({blob,who:$("who").value.trim(),tags:camTags.slice(),ts:Date.now()}));pending++;qs();drain()};
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 setMode(mode);if(mode==="gal"||location.hash==="#gallery")setTimeout(()=>$("gallery").scrollIntoView(),400);drain();qs();
 load();setInterval(()=>{if(!editing)load()},30000);
