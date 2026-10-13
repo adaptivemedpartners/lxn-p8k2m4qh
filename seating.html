@@ -68,4 +68,5 @@ $("addRow").onclick=async()=>{try{await rpc("vow_seating_rows",{p:pass,r:S.rows+
 $("shareBtn").onclick=()=>{const u=location.href.split("#")[0].split("?")[0];navigator.clipboard?.writeText(u).then(()=>st("Link copied: "+u),()=>prompt("Share this link:",u))};
 if(pass&&location.hash=="#edit")rpc("vow_seating_check",{p:pass}).then(ok=>ok&&enterEdit());
 load();setInterval(()=>{if(!editing)load()},30000);
-</script></body></html>
+</script><script src="assets/photo-fab.js"></script>
+</body></html>

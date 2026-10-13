@@ -135,4 +135,5 @@ $("shut").onclick=async()=>{const v=$("vid");if(!v.videoWidth)return;const s=Mat
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 setMode(mode);if(mode==="gal"||location.hash==="#gallery")setTimeout(()=>$("gallery").scrollIntoView(),400);drain();qs();
 load();setInterval(()=>{if(!editing)load()},30000);
-</script></body></html>
+</script><script src="assets/photo-fab.js"></script>
+</body></html>
