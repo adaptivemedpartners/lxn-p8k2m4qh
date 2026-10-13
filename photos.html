@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Share Your Photos · December 18</title><meta name="robots" content="noindex"/>
+<link rel="manifest" href="manifest.webmanifest"/><meta name="theme-color" content="#b88996"/><meta name="apple-mobile-web-app-capable" content="yes"/><link rel="apple-touch-icon" href="assets/vow-icon-192.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root{--blush:#f6e8ec;--rose:#d4b0ba;--dusty:#b88996;--ink:#3d3336;--muted:#7a6a6e;--cream:#fbf7f2;--gold:#b8a07a;--card:#fffdfb;--line:rgba(184,160,122,.35)}
@@ -20,16 +21,30 @@ h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-align:center;marg
 .ph .by{position:absolute;left:4px;bottom:4px;font-size:.65rem;background:#fffc;border-radius:99px;padding:1px 6px}
 .lb{position:fixed;inset:0;background:rgba(30,20,24,.92);display:none;align-items:center;justify-content:center;z-index:9;flex-direction:column}.lb img{max-width:96vw;max-height:86vh;border-radius:8px}.lb p{color:#fff;margin:8px}
 .tools{text-align:center;margin-top:30px}.tools button,.tools input{font:inherit;border:1px solid var(--gold);background:var(--card);border-radius:99px;padding:6px 14px}
+.tabs{display:flex;gap:6px;justify-content:center;margin:0 0 14px}.tabs button{font:inherit;font-weight:700;border:1px solid var(--dusty);background:var(--card);color:var(--dusty);border-radius:99px;padding:8px 22px;cursor:pointer}.tabs button.on{background:var(--dusty);color:#fff}
+.cam{position:relative;background:#000;border-radius:18px;overflow:hidden;aspect-ratio:3/4;max-height:68vh;margin:0 auto 10px}.cam video{width:100%;height:100%;object-fit:cover;display:block}.cam.mirror video{transform:scaleX(-1)}
+.shut{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);width:76px;height:76px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,.35);cursor:pointer}.shut:active{background:#fff}
+.cb{position:absolute;bottom:28px;width:50px;height:50px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:1.4rem;cursor:pointer}.cb.flip{right:18px}.cb.torch{left:18px}.cb.on{background:#f5d76e;color:#000}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
+.qstat{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);color:#fff;border-radius:99px;padding:4px 12px;font-size:.85rem}
+.camname{position:absolute;top:10px;left:10px;right:110px}.camname input{width:100%;font:inherit;font-size:.85rem;border:0;border-radius:99px;padding:5px 12px;background:rgba(255,255,255,.85)}
 </style></head><body><div class="wrap">
 <a class="back" href="./">← Back to the guest page</a>
 <h1>Share Your Photos</h1><p class="sub">Mike &amp; Erica · December 18</p>
+<div class="tabs"><button id="tCam">📸 Camera</button><button id="tGal">🖼 Gallery</button></div>
+<div id="camView"><div class="cam" id="cam"><video id="vid" playsinline muted autoplay></video><div class="flash" id="fl"></div>
+<div class="camname"><input id="who2" maxlength="60" placeholder="Your name (optional)"/></div><div class="qstat" id="qs">0 uploaded ✓</div>
+<button class="cb torch" id="torch" hidden aria-label="Flash">⚡</button><button class="shut" id="shut" aria-label="Take photo"></button><button class="cb flip" id="flip" aria-label="Flip camera">🔄</button></div>
+<p class="msg" id="camMsg" style="text-align:center">Tap the circle to take a photo. It uploads right away.</p></div>
+<div id="galView">
 <div class="card">
 <input class="name" id="who" maxlength="60" placeholder="Your name (optional)"/>
 <button class="big" id="add">📷 Add photos</button>
-<input type="file" id="file" accept="image/*" multiple hidden/>
+<input type="file" id="file" accept="image/*" multiple hidden/><input type="file" id="fileCap" accept="image/*" capture="environment" hidden/>
 <div class="prog" id="prog" hidden><div></div></div><div class="msg" id="msg"></div>
 </div>
 <h2>Photos from today</h2><div class="grid" id="grid"></div><p class="msg" id="empty" style="text-align:center"></p>
+</div>
 <div class="tools"><button id="editBtn">Edit</button> <span id="passBox" hidden><input id="passIn" type="password" placeholder="Passcode"/> <button id="passGo">Unlock</button></span></div>
 </div>
 <div class="lb" id="lb"><img id="lbImg" alt=""/><p id="lbCap"></p></div>
@@ -67,5 +82,35 @@ $("lb").onclick=()=>$("lb").style.display="none";
 async function enter(){editing=true;$("passBox").hidden=true;$("editBtn").textContent="Done editing";load()}
 $("editBtn").onclick=async()=>{if(editing){editing=false;$("editBtn").textContent="Edit";return load()}if(pass&&await rpc("vow_seating_check",{p:pass}))return enter();$("passBox").hidden=false;$("passIn").focus()};
 $("passGo").onclick=async()=>{const p=$("passIn").value;if(await rpc("vow_seating_check",{p})){pass=p;localStorage.setItem("vowSeatPass",p);enter()}else $("passIn").value="",$("passIn").placeholder="Wrong passcode"};
+// ---- camera mode ----
+let stream=null,facing="environment",track=null,torchOn=false,done=+localStorage.getItem("vowCamDone")||0,mode=new URLSearchParams(location.search).get("view")==="gallery"?"gal":"cam";
+const syncName=v=>{$("who").value=$("who2").value=v;localStorage.setItem("vowPhotoName",v)};$("who2").value=$("who").value;
+$("who").oninput=e=>syncName(e.target.value);$("who2").oninput=e=>syncName(e.target.value);
+function setMode(m){mode=m;$("camView").hidden=m!=="cam";$("tCam").classList.toggle("on",m==="cam");$("tGal").classList.toggle("on",m!=="cam");
+ history.replaceState(null,"",m==="cam"?location.pathname:"?view=gallery");if(m==="cam")startCam();else{stopCam();}}
+$("tCam").onclick=()=>setMode("cam");$("tGal").onclick=()=>{setMode("gal");$("galView").scrollIntoView({behavior:"smooth"})};
+function stopCam(){stream&&stream.getTracks().forEach(t=>t.stop());stream=null}
+async function startCam(){stopCam();try{if(!navigator.mediaDevices?.getUserMedia)throw new Error("unsupported");
+ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:4032},height:{ideal:3024}},audio:false});
+ $("vid").srcObject=stream;track=stream.getVideoTracks()[0];$("cam").classList.toggle("mirror",facing==="user");
+ const caps=track.getCapabilities?.()||{};$("torch").hidden=!caps.torch;torchOn=false;$("torch").classList.remove("on");$("camMsg").textContent="Tap the circle to take a photo. It uploads right away."}
+ catch(e){$("cam").hidden=true;$("camMsg").innerHTML='Camera not available here. <button class="big" id="fb" style="margin-top:10px">📷 Take or choose photos</button>';$("fb").onclick=()=>$("fileCap").click()}}
+$("fileCap").onchange=e=>{$("file").onchange({target:e.target})};
+$("flip").onclick=()=>{facing=facing==="user"?"environment":"user";startCam()};
+$("torch").onclick=async()=>{torchOn=!torchOn;try{await track.applyConstraints({advanced:[{torch:torchOn}]});$("torch").classList.toggle("on",torchOn)}catch(e){torchOn=false}};
+// offline-safe queue in IndexedDB
+const idb=new Promise((ok,bad)=>{const q=indexedDB.open("vowCam",1);q.onupgradeneeded=()=>q.result.createObjectStore("q",{keyPath:"id",autoIncrement:true});q.onsuccess=()=>ok(q.result);q.onerror=bad});
+const tx=async(m,f)=>{const d=await idb;return new Promise((ok,bad)=>{const t=d.transaction("q",m),st=t.objectStore("q"),r=f(st);t.oncomplete=()=>ok(r&&r.result);t.onerror=bad})};
+let pending=0,busy=false;const qs=()=>$("qs").textContent=done+" uploaded ✓"+(pending?" · "+pending+" waiting":"");
+async function drain(){if(busy)return;busy=true;try{const items=await tx("readonly",s=>s.getAll());pending=items.length;qs();
+ for(const it of items){try{const path="guests/"+it.ts+"-"+Math.random().toString(36).slice(2,8)+".jpg";await put(path,it.blob,()=>{});await rpc("vow_photo_add",{path,uploader:it.who});
+  await tx("readwrite",s=>s.delete(it.id));done++;localStorage.setItem("vowCamDone",done);pending--;qs()}catch(e){break}}}finally{busy=false}if(pending)setTimeout(drain,8000);else load()}
+addEventListener("online",drain);
+$("shut").onclick=async()=>{const v=$("vid");if(!v.videoWidth)return;const s=Math.min(1,3000/Math.max(v.videoWidth,v.videoHeight)),c=document.createElement("canvas");
+ c.width=Math.round(v.videoWidth*s);c.height=Math.round(v.videoHeight*s);const g=c.getContext("2d");if(facing==="user"){g.translate(c.width,0);g.scale(-1,1)}g.drawImage(v,0,0,c.width,c.height);
+ $("fl").style.opacity=.9;setTimeout(()=>$("fl").style.opacity=0,120);navigator.vibrate?.(30);
+ const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.88));await tx("readwrite",s=>s.add({blob,who:$("who").value.trim(),ts:Date.now()}));pending++;qs();drain()};
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+setMode(mode);drain();qs();
 load();setInterval(()=>{if(!editing)load()},30000);
 </script></body></html>
