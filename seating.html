@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ceremony Seating · December 18</title><meta name="robots" content="noindex"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--blush:#f6e8ec;--rose:#d4b0ba;--dusty:#b88996;--ink:#3d3336;--muted:#7a6a6e;--cream:#fbf7f2;--sand:#f3ebe3;--gold:#b8a07a;--ocean:#6fa8b2;--card:#fffdfb;--line:rgba(184,160,122,.35)}
+*{box-sizing:border-box}body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:linear-gradient(var(--cream),var(--blush));min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:20px 14px 60px}
+h1{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(2.4rem,9vw,3.6rem);text-align:center;margin:8px 0 0;color:var(--dusty)}
+.sub{text-align:center;font-family:"Cormorant Garamond",serif;font-size:1.25rem;color:var(--muted);margin:0 0 16px}
+a.back{color:var(--dusty);font-size:.9rem}
+.bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 18px}
+button{font:inherit;border:1px solid var(--gold);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 16px;cursor:pointer}
+button.pri{background:var(--dusty);border-color:var(--dusty);color:#fff}
+.front{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center;margin-bottom:10px}
+.front h2,.aisle-lbl{font-family:"Cormorant Garamond",serif;font-weight:600;margin:0 0 8px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-size:.85rem}
+.couple{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.pill{padding:8px 14px;border-radius:999px;background:var(--blush);border:1px solid var(--rose);font-weight:600}
+.pill.c{font-family:"Great Vibes",cursive;font-size:1.6rem;font-weight:400;background:none;border:none;color:var(--dusty);padding:0 6px}
+.arch{font-size:1.4rem}
+.rows{display:grid;grid-template-columns:auto 1fr 34px 1fr;gap:6px 6px;align-items:center}
+.rn{font-size:.75rem;color:var(--muted);width:22px;text-align:right}
+.side{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.aisle{height:100%;background:repeating-linear-gradient(to bottom,var(--rose) 0 6px,transparent 6px 12px);width:2px;margin:0 auto}
+.seat{min-height:46px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;text-align:center;padding:4px;font-size:.85rem;word-break:break-word}
+.seat.empty{color:#bfb2b5;font-style:italic}
+.edit .seat{cursor:pointer;border-style:dashed;border-color:var(--gold)}
+.seat input{width:100%;border:0;background:transparent;font:inherit;text-align:center;outline:none}
+.head{display:grid;grid-template-columns:auto 1fr 34px 1fr;gap:6px;margin:8px 0 4px;text-align:center;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.status{text-align:center;font-size:.85rem;color:var(--muted);min-height:1.2em}
+.count{text-align:center;font-family:"Cormorant Garamond",serif;font-size:1.1rem;margin-top:12px}
+@media(max-width:420px){.seat{font-size:.75rem;min-height:42px}.rows,.head{grid-template-columns:auto 1fr 18px 1fr}}
+@media print{.bar,.status,a.back{display:none}}
+</style></head><body><div class="wrap">
+<a class="back" href="./">← Back to the guest page</a>
+<h1>Ceremony Seating</h1><p class="sub">Mike &amp; Erica · December 18 · Hotel Marina El Cid</p>
+<div class="bar" id="bar"><button id="editBtn">Edit seats</button><button id="addRow" hidden>+ Add row</button><button id="shareBtn">Copy share link</button></div>
+<div class="status" id="status">Loading…</div>
+<div class="front"><span class="arch">🌸</span><h2>Up front</h2>
+<div class="couple"><span class="pill">Ethan</span><span class="pill c">Mike</span><span class="pill c">Erica</span><span class="pill">Savanah</span></div></div>
+<div class="head"><span></span><span>Left</span><span></span><span>Right</span></div>
+<div class="rows" id="rows"></div>
+<div class="count" id="count"></div>
+</div>
+<script>
+const URL_="https://pmbehaioxviyhdmmczfl.supabase.co/rest/v1/rpc/",KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtYmVoYWlveHZpeWhkbW1jemZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxODg4NjAsImV4cCI6MjEwMjc2NDg2MH0.H6u8tZ3lnkeOOfK1bwlQ5OIKkNbLpAmfi7NykSE_vIE";
+const rpc=(f,b)=>fetch(URL_+f,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify(b||{})}).then(async r=>{if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||r.status);const t=await r.text();return t?JSON.parse(t):null});
+let S={rows:6,seats:{}},pass=sessionStorage.getItem("vowSeatPass")||"",editing=false;
+const $=id=>document.getElementById(id),st=m=>$("status").textContent=m;
+function render(){const R=$("rows");R.innerHTML="";R.parentElement.classList.toggle("edit",editing);document.body.classList.toggle("edit",editing);let filled=0;
+for(let r=1;r<=S.rows;r++){const n=document.createElement("span");n.className="rn";n.textContent=r;R.append(n);
+ ["L","R"].forEach((s,i)=>{const side=document.createElement("div");side.className="side";
+  for(let c=1;c<=2;c++){const k=`${r}${s}${c}`,v=(S.seats[k]||"").trim();if(v)filled++;const d=document.createElement("div");d.className="seat"+(v?"":" empty");d.textContent=v||(editing?"tap to add":"·");d.dataset.k=k;if(editing)d.onclick=()=>edit(d);side.append(d)}
+  R.append(side);if(i==0){const a=document.createElement("div");a.className="aisle";R.append(a)}});}
+$("count").textContent=`${filled} of ${S.rows*4} seats named`;}
+function edit(d){if(d.querySelector("input"))return;const k=d.dataset.k,i=document.createElement("input");i.value=S.seats[k]||"";i.maxLength=80;d.textContent="";d.classList.remove("empty");d.append(i);i.focus();
+ let done=false;const save=async()=>{if(done)return;done=true;const v=i.value.trim();if(v===(S.seats[k]||"")){render();return}S.seats[k]=v;render();st("Saving…");
+  try{await rpc("vow_seat_set",{p:pass,k,n:v});st("Saved ✓")}catch(e){st("Save failed: "+e.message)}};
+ i.onblur=save;i.onkeydown=e=>{if(e.key==="Enter")i.blur();if(e.key==="Escape"){done=true;render()}}}
+async function load(){try{S=await rpc("vow_seating_get");if(!editing)st("");render()}catch(e){st("Couldn't load seating: "+e.message)}}
+$("editBtn").onclick=async()=>{if(editing){editing=false;$("editBtn").textContent="Edit seats";$("addRow").hidden=true;render();st("View mode");return}
+ if(!pass||!(await rpc("vow_seating_check",{p:pass}))){pass=prompt("Edit passcode:")||"";if(!(await rpc("vow_seating_check",{p:pass}))){pass="";st("Wrong passcode");return}sessionStorage.setItem("vowSeatPass",pass)}
+ editing=true;$("editBtn").textContent="Done editing";$("editBtn").className="pri";$("addRow").hidden=false;await load();st("Edit mode: tap a seat to type a name")};
+$("addRow").onclick=async()=>{try{await rpc("vow_seating_rows",{p:pass,r:S.rows+1});S.rows++;render();st("Row added ✓")}catch(e){st("Couldn't add row: "+e.message)}};
+$("shareBtn").onclick=()=>{const u=location.href.split("#")[0].split("?")[0];navigator.clipboard?.writeText(u).then(()=>st("Link copied: "+u),()=>prompt("Share this link:",u))};
+load();setInterval(()=>{if(!editing)load()},30000);
+</script></body></html>
