@@ -34,6 +34,15 @@ h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-align:center;marg
 .lb .row{display:flex;gap:10px;margin-top:10px}.lb .row button{font:inherit;font-weight:700;border:0;border-radius:99px;padding:12px 22px;cursor:pointer}.lb .row .d{background:var(--dusty);color:#fff}.lb .row .x{background:#fff;color:var(--ink)}
 .gtools{text-align:center;margin:0 0 12px}.gtools button{font:inherit;font-weight:700;border:2px solid var(--dusty);background:var(--card);color:var(--dusty);border-radius:99px;padding:10px 20px;cursor:pointer}
 .hint{text-align:center;font-size:.8rem;color:var(--muted);margin:0 0 10px}
+.tp{position:relative;text-align:left;margin:0 0 10px}.tp .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:5px}
+.tp .chip{background:var(--blush);border:1px solid var(--rose);border-radius:99px;padding:3px 6px 3px 10px;font-size:.85rem}.tp .chip b{cursor:pointer;margin-left:4px;color:var(--dusty)}
+.tp input{width:100%;font:inherit;padding:10px 14px;border-radius:12px;border:1px solid var(--rose)}
+.tp .dd{position:absolute;left:0;right:0;top:100%;z-index:20;background:#fff;border:1px solid var(--rose);border-radius:12px;max-height:220px;overflow:auto;box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.tp .dd div{padding:10px 14px;cursor:pointer}.tp .dd div:hover,.tp .dd div.on{background:var(--blush)}
+.camtags{margin:0 0 6px}.camtags summary{cursor:pointer;font-weight:700;color:var(--dusty);text-align:center;padding:6px;list-style:none}
+.cell{display:flex;flex-direction:column}.tg{font-size:.7rem;color:var(--muted);padding:3px 2px;line-height:1.25}
+.gfilter{display:block;margin:0 auto 12px;font:inherit;padding:10px 14px;border-radius:99px;border:2px solid var(--dusty);color:var(--ink);background:var(--card);max-width:100%}
+.lb .tp{width:min(92vw,420px);margin-top:8px}.lb .tp .chip{background:#fff}.lb .lbt{color:#fff;font-size:.85rem;margin:6px 0 0}
 </style></head><body><div class="wrap">
 <a class="back" href="./">← Back to the guest page</a>
 <h1>Share Your Photos</h1><p class="sub">Mike &amp; Erica · December 18</p>
@@ -41,27 +50,45 @@ h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-align:center;marg
 <div id="camView"><div class="cam" id="cam"><video id="vid" playsinline muted autoplay></video><div class="flash" id="fl"></div>
 <div class="camname"><input id="who2" maxlength="60" placeholder="Your name (optional)"/></div><div class="qstat" id="qs">0 uploaded ✓</div>
 <button class="cb torch" id="torch" hidden aria-label="Flash">⚡</button><button class="shut" id="shut" aria-label="Take photo"></button><button class="cb flip" id="flip" aria-label="Flip camera">🔄</button></div>
+<details class="camtags" id="camTagsBox"><summary id="camTagsSum">👥 Tag who’s in your next photos</summary><div id="camTags"></div></details>
 <p class="msg" id="camMsg" style="text-align:center">Tap the circle to take a photo. It uploads right away.</p>
 <button class="seebig" id="seeBig">🖼 See &amp; Download everyone’s photos ↓</button></div>
 <div id="galView">
 <div class="card">
 <input class="name" id="who" maxlength="60" placeholder="Your name (optional)"/>
 <button class="big" id="add">📷 Add photos</button>
-<input type="file" id="file" accept="image/*" multiple hidden/><input type="file" id="fileCap" accept="image/*" capture="environment" hidden/>
+<div id="upTags"></div><input type="file" id="file" accept="image/*" multiple hidden/><input type="file" id="fileCap" accept="image/*" capture="environment" hidden/>
 <div class="prog" id="prog" hidden><div></div></div><div class="msg" id="msg"></div>
 </div>
-<h2 id="gallery">Photos from today</h2><p class="hint">Tap a photo to view it full-size. Tap ⬇ to save it.</p><div class="gtools"><button id="dlAll" hidden>⬇ Download all (zip)</button></div><div class="grid" id="grid"></div><p class="msg" id="empty" style="text-align:center"></p>
+<h2 id="gallery">Photos from today</h2><p class="hint">Tap a photo to view it full-size. Tap ⬇ to save it.</p><select class="gfilter" id="gf"><option value="">👥 Show everyone</option></select><div class="gtools"><button id="dlAll" hidden>⬇ Download all (zip)</button></div><div class="grid" id="grid"></div><p class="msg" id="empty" style="text-align:center"></p>
 </div>
 <div class="tools"><button id="editBtn">Edit</button> <span id="passBox" hidden><input id="passIn" type="password" placeholder="Passcode"/> <button id="passGo">Unlock</button></span></div>
 </div>
-<div class="lb" id="lb"><img id="lbImg" alt=""/><p id="lbCap"></p><div class="row"><button class="d" id="lbDl">⬇ Download</button><button class="x" id="lbX">Close</button></div></div>
+<div class="lb" id="lb"><img id="lbImg" alt=""/><p id="lbCap"></p><div id="lbTags" onclick="event.stopPropagation()"></div><p class="lbt" id="lbMsg"></p><div class="row"><button class="d" id="lbDl">⬇ Download</button><button class="x" id="lbX">Close</button></div></div>
 <script>
 const SB="https://pmbehaioxviyhdmmczfl.supabase.co",KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtYmVoYWlveHZpeWhkbW1jemZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxODg4NjAsImV4cCI6MjEwMjc2NDg2MH0.H6u8tZ3lnkeOOfK1bwlQ5OIKkNbLpAmfi7NykSE_vIE",BUCKET="vow-photos",MAX=15*1024*1024;
 const H={apikey:KEY,Authorization:"Bearer "+KEY};
 const rpc=(f,b)=>fetch(SB+"/rest/v1/rpc/"+f,{method:"POST",headers:{...H,"Content-Type":"application/json"},body:JSON.stringify(b||{})}).then(async r=>{if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||r.status);const t=await r.text();return t?JSON.parse(t):null});
 const $=id=>document.getElementById(id),pub=p=>SB+"/storage/v1/object/public/"+BUCKET+"/"+p;
+let GUESTS=[],camTags=JSON.parse(localStorage.getItem("vowCamTags")||"[]"),filt="";
+rpc("vow_guest_names").then(n=>{GUESTS=n||[];pickers.forEach(f=>f())}).catch(()=>{});
+const pickers=[];
+function picker(el,get,set){el.className="tp";el.innerHTML='<div class="chips"></div><input placeholder="Type a guest name…" autocomplete="off"/><div class="dd" hidden></div>';
+ const ch=el.querySelector(".chips"),inp=el.querySelector("input"),dd=el.querySelector(".dd");
+ const draw=()=>{ch.innerHTML="";get().forEach(t=>{const c=document.createElement("span");c.className="chip";c.textContent=t;const x=document.createElement("b");x.textContent="×";x.onclick=e=>{e.stopPropagation();set(get().filter(v=>v!==t));draw()};c.append(x);ch.append(c)})};
+ const show=()=>{const q=inp.value.trim().toLowerCase(),sel=get(),opts=GUESTS.filter(g=>!sel.includes(g)&&g.toLowerCase().includes(q));dd.innerHTML="";
+  opts.slice(0,40).forEach(g=>{const d=document.createElement("div");d.textContent=g;d.onmousedown=e=>{e.preventDefault();add(g)};dd.append(d)});
+  if(q&&!GUESTS.some(g=>g.toLowerCase()===q)){const d=document.createElement("div");d.textContent='+ Add "'+inp.value.trim()+'"';d.onmousedown=e=>{e.preventDefault();add(inp.value.trim())};dd.append(d)}
+  dd.hidden=!dd.children.length};
+ const add=g=>{if(g&&!get().includes(g))set([...get(),g]);inp.value="";draw();show();inp.focus()};
+ inp.onfocus=show;inp.oninput=show;inp.onblur=()=>setTimeout(()=>dd.hidden=true,150);
+ inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();const f=dd.querySelector("div");f&&f.onmousedown(e)}};
+ const refresh=()=>{draw();if(document.activeElement===inp)show()};pickers.push(refresh);draw();return refresh}
+const camSum=()=>{$("camTagsSum").textContent=camTags.length?"👥 Tagging: "+camTags.join(", ")+" (tap to change)":"👥 Tag who’s in your next photos"};
 let pass=localStorage.getItem("vowSeatPass")||"",editing=false;
 $("who").value=localStorage.getItem("vowPhotoName")||"";
+const setCam=v=>{camTags=v;localStorage.setItem("vowCamTags",JSON.stringify(v));camSum();pickers.forEach(f=>f())};
+picker($("camTags"),()=>camTags,setCam);picker($("upTags"),()=>camTags,setCam);camSum();
 $("add").onclick=()=>$("file").click();
 async function shrink(f){ // resize big photos on the device to ~3000px JPEG
  if(!/^image\/(jpeg|png|webp)$/.test(f.type))return f;
@@ -76,16 +103,21 @@ $("file").onchange=async e=>{const files=[...e.target.files].filter(f=>f.type.st
  for(let i=0;i<files.length;i++){$("msg").textContent=`Uploading ${i+1} of ${files.length}…`;
   try{const f=await shrink(files[i]);if(f.size>MAX)throw new Error("too big");
    const ext=(f.type.split("/")[1]||"jpg").replace("jpeg","jpg"),path="guests/"+Date.now()+"-"+Math.random().toString(36).slice(2,8)+"."+ext;
-   await put(path,f,p=>bar.style.width=((i+p)/files.length*100)+"%");await rpc("vow_photo_add",{path,uploader:who});ok++}catch(err){fail++;console.warn(err)}}
+   await put(path,f,p=>bar.style.width=((i+p)/files.length*100)+"%");await rpc("vow_photo_add",{path,uploader:who,tags:camTags});ok++}catch(err){fail++;console.warn(err)}}
  bar.style.width="100%";$("msg").innerHTML=ok?`<div class="thanks">Thank you${who?", "+who.replace(/[<>&]/g,""):""}!</div>${ok} photo${ok>1?"s":""} added${fail?` · ${fail} couldn't upload (photos must be images under 15 MB)`:""}`:"Sorry, those photos couldn't upload. Please try again.";
  setTimeout(()=>$("prog").hidden=true,1500);load()};
 async function load(){const L=await rpc("vow_photos_list",{p:editing?pass:null}).catch(()=>[]);shown=L;$("dlAll").hidden=!L.some(x=>!x.hidden);const g=$("grid");g.innerHTML="";$("empty").textContent=L.length?"":"No photos yet. Be the first!";
- L.forEach(x=>{const d=document.createElement("div");d.className="ph"+(x.hidden?" hid":"");const im=document.createElement("img");im.loading="lazy";im.src=pub(x.path);im.alt="Photo"+(x.by?" from "+x.by:"");d.append(im);
+ const all=[...new Set(L.flatMap(x=>x.tags||[]))].sort(),gf=$("gf");gf.innerHTML='<option value="">👥 Show everyone</option>'+all.map(t=>'<option>'+t.replace(/[<&]/g,"")+'</option>').join("");if(all.includes(filt))gf.value=filt;else filt="";
+ gf.hidden=!all.length;
+ L.filter(x=>!filt||(x.tags||[]).includes(filt)).forEach(x=>{const d=document.createElement("div");d.className="ph"+(x.hidden?" hid":"");const im=document.createElement("img");im.loading="lazy";im.src=pub(x.path);im.alt="Photo"+(x.by?" from "+x.by:"");d.append(im);
   if(x.by){const s=document.createElement("span");s.className="by";s.textContent=x.by;d.append(s)}
-  d.onclick=()=>{cur=x;$("lbImg").src=pub(x.path);$("lbCap").textContent=x.by?"From "+x.by:"";$("lb").style.display="flex"};
+  d.onclick=()=>{cur=x;lbSel=(x.tags||[]).slice();lbRefresh();$("lbMsg").textContent=x.hidden?"":"Tap a name field to tag who’s in this photo — saves automatically.";$("lbImg").src=pub(x.path);$("lbCap").textContent=x.by?"From "+x.by:"";$("lb").style.display="flex"};
   const dl=document.createElement("button");dl.className="dl";dl.textContent="⬇ Save";dl.setAttribute("aria-label","Download photo");dl.onclick=ev=>{ev.stopPropagation();download(x)};d.append(dl);
   if(editing){const b=document.createElement("button");b.textContent=x.hidden?"Unhide":"Hide";b.onclick=async ev=>{ev.stopPropagation();await rpc("vow_photo_hide",{p:pass,pid:x.id,h:!x.hidden});load()};d.append(b)}
-  g.append(d)})}
+  const cell=document.createElement("div");cell.className="cell";cell.append(d);const tg=document.createElement("div");tg.className="tg";tg.textContent=(x.tags||[]).length?"👥 "+x.tags.join(", "):"";cell.append(tg);g.append(cell)})}
+$("gf").onchange=e=>{filt=e.target.value;load()};
+let lbSel=[];const lbRefresh=picker($("lbTags"),()=>lbSel,async v=>{lbSel=v;if(!cur)return;$("lbMsg").textContent="Saving tags…";
+ try{await rpc("vow_photo_set_tags",{pid:cur.id,tags:v});cur.tags=v;$("lbMsg").textContent="Tags saved ✓";load()}catch(e){$("lbMsg").textContent="Couldn't save tags"}});
 let cur=null,shown=[];
 $("lb").onclick=e=>{if(e.target.id==="lb"||e.target.id==="lbX"||e.target.id==="lbImg")$("lb").style.display="none"};
 $("lbDl").onclick=e=>{e.stopPropagation();cur&&download(cur)};
@@ -125,13 +157,13 @@ const idb=new Promise((ok,bad)=>{const q=indexedDB.open("vowCam",1);q.onupgraden
 const tx=async(m,f)=>{const d=await idb;return new Promise((ok,bad)=>{const t=d.transaction("q",m),st=t.objectStore("q"),r=f(st);t.oncomplete=()=>ok(r&&r.result);t.onerror=bad})};
 let pending=0,busy=false;const qs=()=>$("qs").textContent=done+" uploaded ✓"+(pending?" · "+pending+" waiting":"");
 async function drain(){if(busy)return;busy=true;try{const items=await tx("readonly",s=>s.getAll());pending=items.length;qs();
- for(const it of items){try{const path="guests/"+it.ts+"-"+Math.random().toString(36).slice(2,8)+".jpg";await put(path,it.blob,()=>{});await rpc("vow_photo_add",{path,uploader:it.who});
+ for(const it of items){try{const path="guests/"+it.ts+"-"+Math.random().toString(36).slice(2,8)+".jpg";await put(path,it.blob,()=>{});await rpc("vow_photo_add",{path,uploader:it.who,tags:it.tags||[]});
   await tx("readwrite",s=>s.delete(it.id));done++;localStorage.setItem("vowCamDone",done);pending--;qs()}catch(e){break}}}finally{busy=false}if(pending)setTimeout(drain,8000);else load()}
 addEventListener("online",drain);
 $("shut").onclick=async()=>{const v=$("vid");if(!v.videoWidth)return;const s=Math.min(1,3000/Math.max(v.videoWidth,v.videoHeight)),c=document.createElement("canvas");
  c.width=Math.round(v.videoWidth*s);c.height=Math.round(v.videoHeight*s);const g=c.getContext("2d");if(facing==="user"){g.translate(c.width,0);g.scale(-1,1)}g.drawImage(v,0,0,c.width,c.height);
  $("fl").style.opacity=.9;setTimeout(()=>$("fl").style.opacity=0,120);navigator.vibrate?.(30);
- const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.88));await tx("readwrite",s=>s.add({blob,who:$("who").value.trim(),ts:Date.now()}));pending++;qs();drain()};
+ const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.88));await tx("readwrite",s=>s.add({blob,who:$("who").value.trim(),tags:camTags.slice(),ts:Date.now()}));pending++;qs();drain()};
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 setMode(mode);if(mode==="gal"||location.hash==="#gallery")setTimeout(()=>$("gallery").scrollIntoView(),400);drain();qs();
 load();setInterval(()=>{if(!editing)load()},30000);
