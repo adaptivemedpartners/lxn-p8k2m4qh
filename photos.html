@@ -27,15 +27,22 @@ h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-align:center;marg
 .cb{position:absolute;bottom:28px;width:50px;height:50px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:1.4rem;cursor:pointer}.cb.flip{right:18px}.cb.torch{left:18px}.cb.on{background:#f5d76e;color:#000}
 .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
 .qstat{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);color:#fff;border-radius:99px;padding:4px 12px;font-size:.85rem}
-.camname{position:absolute;top:10px;left:10px;right:110px}.camname input{width:100%;font:inherit;font-size:.85rem;border:0;border-radius:99px;padding:5px 12px;background:rgba(255,255,255,.85)}
+.camname{position:absolute;top:10px;left:10px;right:calc(10px + 9.5em)}.qstat{max-width:9em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.8rem}.camname input{width:100%;font:inherit;font-size:.85rem;border:0;border-radius:99px;padding:5px 12px;background:rgba(255,255,255,.85)}
+.tabs button{font-size:1rem;padding:12px 18px;flex:1;max-width:240px}
+.seebig{display:block;width:100%;margin:6px 0 14px;font:inherit;font-size:1.15rem;font-weight:700;padding:15px;border-radius:16px;border:2px solid var(--dusty);background:var(--card);color:var(--dusty);cursor:pointer}
+.ph .dl{position:absolute;top:4px;right:4px;bottom:auto;left:auto;font-size:.75rem;font-weight:700;background:var(--dusty);color:#fff;padding:5px 9px}
+.lb .row{display:flex;gap:10px;margin-top:10px}.lb .row button{font:inherit;font-weight:700;border:0;border-radius:99px;padding:12px 22px;cursor:pointer}.lb .row .d{background:var(--dusty);color:#fff}.lb .row .x{background:#fff;color:var(--ink)}
+.gtools{text-align:center;margin:0 0 12px}.gtools button{font:inherit;font-weight:700;border:2px solid var(--dusty);background:var(--card);color:var(--dusty);border-radius:99px;padding:10px 20px;cursor:pointer}
+.hint{text-align:center;font-size:.8rem;color:var(--muted);margin:0 0 10px}
 </style></head><body><div class="wrap">
 <a class="back" href="./">← Back to the guest page</a>
 <h1>Share Your Photos</h1><p class="sub">Mike &amp; Erica · December 18</p>
-<div class="tabs"><button id="tCam">📸 Camera</button><button id="tGal">🖼 Gallery</button></div>
+<div class="tabs"><button id="tCam">📸 Camera</button><button id="tGal">🖼 See &amp; Download Photos</button></div>
 <div id="camView"><div class="cam" id="cam"><video id="vid" playsinline muted autoplay></video><div class="flash" id="fl"></div>
 <div class="camname"><input id="who2" maxlength="60" placeholder="Your name (optional)"/></div><div class="qstat" id="qs">0 uploaded ✓</div>
 <button class="cb torch" id="torch" hidden aria-label="Flash">⚡</button><button class="shut" id="shut" aria-label="Take photo"></button><button class="cb flip" id="flip" aria-label="Flip camera">🔄</button></div>
-<p class="msg" id="camMsg" style="text-align:center">Tap the circle to take a photo. It uploads right away.</p></div>
+<p class="msg" id="camMsg" style="text-align:center">Tap the circle to take a photo. It uploads right away.</p>
+<button class="seebig" id="seeBig">🖼 See &amp; Download everyone’s photos ↓</button></div>
 <div id="galView">
 <div class="card">
 <input class="name" id="who" maxlength="60" placeholder="Your name (optional)"/>
@@ -43,11 +50,11 @@ h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-align:center;marg
 <input type="file" id="file" accept="image/*" multiple hidden/><input type="file" id="fileCap" accept="image/*" capture="environment" hidden/>
 <div class="prog" id="prog" hidden><div></div></div><div class="msg" id="msg"></div>
 </div>
-<h2>Photos from today</h2><div class="grid" id="grid"></div><p class="msg" id="empty" style="text-align:center"></p>
+<h2 id="gallery">Photos from today</h2><p class="hint">Tap a photo to view it full-size. Tap ⬇ to save it.</p><div class="gtools"><button id="dlAll" hidden>⬇ Download all (zip)</button></div><div class="grid" id="grid"></div><p class="msg" id="empty" style="text-align:center"></p>
 </div>
 <div class="tools"><button id="editBtn">Edit</button> <span id="passBox" hidden><input id="passIn" type="password" placeholder="Passcode"/> <button id="passGo">Unlock</button></span></div>
 </div>
-<div class="lb" id="lb"><img id="lbImg" alt=""/><p id="lbCap"></p></div>
+<div class="lb" id="lb"><img id="lbImg" alt=""/><p id="lbCap"></p><div class="row"><button class="d" id="lbDl">⬇ Download</button><button class="x" id="lbX">Close</button></div></div>
 <script>
 const SB="https://pmbehaioxviyhdmmczfl.supabase.co",KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtYmVoYWlveHZpeWhkbW1jemZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxODg4NjAsImV4cCI6MjEwMjc2NDg2MH0.H6u8tZ3lnkeOOfK1bwlQ5OIKkNbLpAmfi7NykSE_vIE",BUCKET="vow-photos",MAX=15*1024*1024;
 const H={apikey:KEY,Authorization:"Bearer "+KEY};
@@ -72,13 +79,28 @@ $("file").onchange=async e=>{const files=[...e.target.files].filter(f=>f.type.st
    await put(path,f,p=>bar.style.width=((i+p)/files.length*100)+"%");await rpc("vow_photo_add",{path,uploader:who});ok++}catch(err){fail++;console.warn(err)}}
  bar.style.width="100%";$("msg").innerHTML=ok?`<div class="thanks">Thank you${who?", "+who.replace(/[<>&]/g,""):""}!</div>${ok} photo${ok>1?"s":""} added${fail?` · ${fail} couldn't upload (photos must be images under 15 MB)`:""}`:"Sorry, those photos couldn't upload. Please try again.";
  setTimeout(()=>$("prog").hidden=true,1500);load()};
-async function load(){const L=await rpc("vow_photos_list",{p:editing?pass:null}).catch(()=>[]);const g=$("grid");g.innerHTML="";$("empty").textContent=L.length?"":"No photos yet. Be the first!";
+async function load(){const L=await rpc("vow_photos_list",{p:editing?pass:null}).catch(()=>[]);shown=L;$("dlAll").hidden=!L.some(x=>!x.hidden);const g=$("grid");g.innerHTML="";$("empty").textContent=L.length?"":"No photos yet. Be the first!";
  L.forEach(x=>{const d=document.createElement("div");d.className="ph"+(x.hidden?" hid":"");const im=document.createElement("img");im.loading="lazy";im.src=pub(x.path);im.alt="Photo"+(x.by?" from "+x.by:"");d.append(im);
   if(x.by){const s=document.createElement("span");s.className="by";s.textContent=x.by;d.append(s)}
-  d.onclick=()=>{$("lbImg").src=pub(x.path);$("lbCap").textContent=x.by?"From "+x.by:"";$("lb").style.display="flex"};
+  d.onclick=()=>{cur=x;$("lbImg").src=pub(x.path);$("lbCap").textContent=x.by?"From "+x.by:"";$("lb").style.display="flex"};
+  const dl=document.createElement("button");dl.className="dl";dl.textContent="⬇ Save";dl.setAttribute("aria-label","Download photo");dl.onclick=ev=>{ev.stopPropagation();download(x)};d.append(dl);
   if(editing){const b=document.createElement("button");b.textContent=x.hidden?"Unhide":"Hide";b.onclick=async ev=>{ev.stopPropagation();await rpc("vow_photo_hide",{p:pass,pid:x.id,h:!x.hidden});load()};d.append(b)}
   g.append(d)})}
-$("lb").onclick=()=>$("lb").style.display="none";
+let cur=null,shown=[];
+$("lb").onclick=e=>{if(e.target.id==="lb"||e.target.id==="lbX"||e.target.id==="lbImg")$("lb").style.display="none"};
+$("lbDl").onclick=e=>{e.stopPropagation();cur&&download(cur)};
+const fname=x=>"Mike-Erica-Dec18-"+(x.by?x.by.replace(/[^A-Za-z0-9]+/g,"-")+"-":"")+x.id+"."+(x.path.split(".").pop()||"jpg");
+async function download(x){const url=pub(x.path),name=fname(x);
+ try{const b=await (await fetch(url)).blob();const f=new File([b],name,{type:b.type||"image/jpeg"});
+  const mobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(mobile&&navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});return}catch(e){if(e.name==="AbortError")return}}
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000)}
+ catch(e){window.open(url,"_blank")}}
+$("dlAll").onclick=async()=>{const B=$("dlAll"),list=shown.filter(x=>!x.hidden);if(!list.length)return;B.disabled=true;
+ try{if(!window.JSZip)await new Promise((ok,bad)=>{const sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";sc.onload=ok;sc.onerror=bad;document.head.append(sc)});
+  const z=new JSZip();let n=0;for(const x of list){B.textContent=`Packing ${++n} of ${list.length}…`;z.file(fname(x),await (await fetch(pub(x.path))).blob())}
+  const blob=await z.generateAsync({type:"blob"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="Mike-Erica-Dec18-photos.zip";document.body.append(a);a.click();setTimeout(()=>a.remove(),4000)}
+ catch(e){alert("Couldn't build the zip. Please save photos one at a time.")}B.disabled=false;B.textContent="⬇ Download all (zip)"};
 async function enter(){editing=true;$("passBox").hidden=true;$("editBtn").textContent="Done editing";load()}
 $("editBtn").onclick=async()=>{if(editing){editing=false;$("editBtn").textContent="Edit";return load()}if(pass&&await rpc("vow_seating_check",{p:pass}))return enter();$("passBox").hidden=false;$("passIn").focus()};
 $("passGo").onclick=async()=>{const p=$("passIn").value;if(await rpc("vow_seating_check",{p})){pass=p;localStorage.setItem("vowSeatPass",p);enter()}else $("passIn").value="",$("passIn").placeholder="Wrong passcode"};
@@ -87,8 +109,8 @@ let stream=null,facing="environment",track=null,torchOn=false,done=+localStorage
 const syncName=v=>{$("who").value=$("who2").value=v;localStorage.setItem("vowPhotoName",v)};$("who2").value=$("who").value;
 $("who").oninput=e=>syncName(e.target.value);$("who2").oninput=e=>syncName(e.target.value);
 function setMode(m){mode=m;$("camView").hidden=m!=="cam";$("tCam").classList.toggle("on",m==="cam");$("tGal").classList.toggle("on",m!=="cam");
- history.replaceState(null,"",m==="cam"?location.pathname:"?view=gallery");if(m==="cam")startCam();else{stopCam();}}
-$("tCam").onclick=()=>setMode("cam");$("tGal").onclick=()=>{setMode("gal");$("galView").scrollIntoView({behavior:"smooth"})};
+ history.replaceState(null,"",m==="cam"?location.pathname:"?view=gallery#gallery");if(m==="cam")startCam();else{stopCam();}}
+$("tCam").onclick=()=>setMode("cam");$("tGal").onclick=()=>{setMode("gal");$("gallery").scrollIntoView({behavior:"smooth"})};$("seeBig").onclick=$("tGal").onclick;
 function stopCam(){stream&&stream.getTracks().forEach(t=>t.stop());stream=null}
 async function startCam(){stopCam();try{if(!navigator.mediaDevices?.getUserMedia)throw new Error("unsupported");
  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:4032},height:{ideal:3024}},audio:false});
@@ -111,6 +133,6 @@ $("shut").onclick=async()=>{const v=$("vid");if(!v.videoWidth)return;const s=Mat
  $("fl").style.opacity=.9;setTimeout(()=>$("fl").style.opacity=0,120);navigator.vibrate?.(30);
  const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.88));await tx("readwrite",s=>s.add({blob,who:$("who").value.trim(),ts:Date.now()}));pending++;qs();drain()};
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
-setMode(mode);drain();qs();
+setMode(mode);if(mode==="gal"||location.hash==="#gallery")setTimeout(()=>$("gallery").scrollIntoView(),400);drain();qs();
 load();setInterval(()=>{if(!editing)load()},30000);
 </script></body></html>
