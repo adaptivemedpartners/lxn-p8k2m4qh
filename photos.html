@@ -85,7 +85,7 @@ function picker(el,get,set){el.className="tp";el.innerHTML='<div class="chips"><
   opts.slice(0,40).forEach(g=>{const d=document.createElement("div");d.textContent=g;d.onmousedown=e=>{e.preventDefault();add(g)};dd.append(d)});
   if(q&&!GUESTS.some(g=>g.toLowerCase()===q)){const d=document.createElement("div");d.textContent='+ Add "'+inp.value.trim()+'"';d.onmousedown=e=>{e.preventDefault();add(inp.value.trim())};dd.append(d)}
   dd.hidden=!dd.children.length};
- const add=g=>{if(g&&!get().includes(g))set([...get(),g]);inp.value="";draw();show();inp.focus()};
+ const add=g=>{if(g&&!get().includes(g))set([...get(),g]);inp.value="";draw();dd.hidden=true;inp.blur()};
  inp.onfocus=show;inp.oninput=show;inp.onblur=()=>setTimeout(()=>dd.hidden=true,150);
  inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();const f=dd.querySelector("div");f&&f.onmousedown(e)}};
  const refresh=()=>{draw();if(document.activeElement===inp)show()};pickers.push(refresh);draw();return refresh}
