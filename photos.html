@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Share Your Photos · December 18</title><meta name="robots" content="noindex"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--blush:#f6e8ec;--rose:#d4b0ba;--dusty:#b88996;--ink:#3d3336;--muted:#7a6a6e;--cream:#fbf7f2;--gold:#b8a07a;--card:#fffdfb;--line:rgba(184,160,122,.35)}
+*{box-sizing:border-box}body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:linear-gradient(var(--cream),var(--blush));min-height:100vh}
+.wrap{max-width:820px;margin:0 auto;padding:20px 14px 60px}a.back{color:var(--dusty);font-size:.9rem}
+h1{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(2.4rem,10vw,3.6rem);text-align:center;margin:8px 0 0;color:var(--dusty)}
+.sub{text-align:center;font-family:"Cormorant Garamond",serif;font-size:1.25rem;color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;text-align:center}
+.big{display:block;width:100%;font:inherit;font-size:1.3rem;font-weight:700;padding:18px;border:0;border-radius:16px;background:var(--dusty);color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(184,137,150,.35)}
+.name{font:inherit;width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--rose);margin:0 0 12px;text-align:center}
+.prog{height:12px;background:var(--blush);border-radius:99px;overflow:hidden;margin-top:14px}.prog>div{height:100%;width:0;background:var(--dusty);transition:width .2s}
+.msg{margin-top:10px;min-height:1.3em;color:var(--muted)}.thanks{font-family:"Great Vibes",cursive;font-size:2rem;color:var(--dusty)}
+h2{font-family:"Cormorant Garamond",serif;font-weight:600;text-align:center;margin:26px 0 10px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
+.ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--blush);cursor:pointer}.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph.hid img{opacity:.3}.ph button{position:absolute;bottom:4px;right:4px;font:inherit;font-size:.7rem;border:0;border-radius:99px;padding:3px 8px;background:#fffc;cursor:pointer}
+.ph .by{position:absolute;left:4px;bottom:4px;font-size:.65rem;background:#fffc;border-radius:99px;padding:1px 6px}
+.lb{position:fixed;inset:0;background:rgba(30,20,24,.92);display:none;align-items:center;justify-content:center;z-index:9;flex-direction:column}.lb img{max-width:96vw;max-height:86vh;border-radius:8px}.lb p{color:#fff;margin:8px}
+.tools{text-align:center;margin-top:30px}.tools button,.tools input{font:inherit;border:1px solid var(--gold);background:var(--card);border-radius:99px;padding:6px 14px}
+</style></head><body><div class="wrap">
+<a class="back" href="./">← Back to the guest page</a>
+<h1>Share Your Photos</h1><p class="sub">Mike &amp; Erica · December 18</p>
+<div class="card">
+<input class="name" id="who" maxlength="60" placeholder="Your name (optional)"/>
+<button class="big" id="add">📷 Add photos</button>
+<input type="file" id="file" accept="image/*" multiple hidden/>
+<div class="prog" id="prog" hidden><div></div></div><div class="msg" id="msg"></div>
+</div>
+<h2>Photos from today</h2><div class="grid" id="grid"></div><p class="msg" id="empty" style="text-align:center"></p>
+<div class="tools"><button id="editBtn">Edit</button> <span id="passBox" hidden><input id="passIn" type="password" placeholder="Passcode"/> <button id="passGo">Unlock</button></span></div>
+</div>
+<div class="lb" id="lb"><img id="lbImg" alt=""/><p id="lbCap"></p></div>
+<script>
+const SB="https://pmbehaioxviyhdmmczfl.supabase.co",KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtYmVoYWlveHZpeWhkbW1jemZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxODg4NjAsImV4cCI6MjEwMjc2NDg2MH0.H6u8tZ3lnkeOOfK1bwlQ5OIKkNbLpAmfi7NykSE_vIE",BUCKET="vow-photos",MAX=15*1024*1024;
+const H={apikey:KEY,Authorization:"Bearer "+KEY};
+const rpc=(f,b)=>fetch(SB+"/rest/v1/rpc/"+f,{method:"POST",headers:{...H,"Content-Type":"application/json"},body:JSON.stringify(b||{})}).then(async r=>{if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||r.status);const t=await r.text();return t?JSON.parse(t):null});
+const $=id=>document.getElementById(id),pub=p=>SB+"/storage/v1/object/public/"+BUCKET+"/"+p;
+let pass=localStorage.getItem("vowSeatPass")||"",editing=false;
+$("who").value=localStorage.getItem("vowPhotoName")||"";
+$("add").onclick=()=>$("file").click();
+async function shrink(f){ // resize big photos on the device to ~3000px JPEG
+ if(!/^image\/(jpeg|png|webp)$/.test(f.type))return f;
+ try{const bm=await createImageBitmap(f);const s=Math.min(1,3000/Math.max(bm.width,bm.height));if(s===1&&f.size<4e6)return f;
+  const c=document.createElement("canvas");c.width=Math.round(bm.width*s);c.height=Math.round(bm.height*s);c.getContext("2d").drawImage(bm,0,0,c.width,c.height);
+  const b=await new Promise(r=>c.toBlob(r,"image/jpeg",.85));return b&&b.size<f.size?new File([b],"p.jpg",{type:"image/jpeg"}):f}catch(e){return f}}
+function put(path,blob,onp){return new Promise((ok,bad)=>{const x=new XMLHttpRequest();x.open("POST",SB+"/storage/v1/object/"+BUCKET+"/"+path);
+ for(const k in H)x.setRequestHeader(k,H[k]);x.setRequestHeader("Content-Type",blob.type||"image/jpeg");x.setRequestHeader("x-upsert","false");
+ x.upload.onprogress=e=>e.lengthComputable&&onp(e.loaded/e.total);x.onload=()=>x.status<300?ok():bad(new Error(x.responseText||x.status));x.onerror=()=>bad(new Error("network"));x.send(blob)})}
+$("file").onchange=async e=>{const files=[...e.target.files].filter(f=>f.type.startsWith("image/")||/\.(hei[cf])$/i.test(f.name));e.target.value="";if(!files.length)return;
+ const who=$("who").value.trim();localStorage.setItem("vowPhotoName",who);const bar=$("prog").firstElementChild;$("prog").hidden=false;let ok=0,fail=0;
+ for(let i=0;i<files.length;i++){$("msg").textContent=`Uploading ${i+1} of ${files.length}…`;
+  try{const f=await shrink(files[i]);if(f.size>MAX)throw new Error("too big");
+   const ext=(f.type.split("/")[1]||"jpg").replace("jpeg","jpg"),path="guests/"+Date.now()+"-"+Math.random().toString(36).slice(2,8)+"."+ext;
+   await put(path,f,p=>bar.style.width=((i+p)/files.length*100)+"%");await rpc("vow_photo_add",{path,uploader:who});ok++}catch(err){fail++;console.warn(err)}}
+ bar.style.width="100%";$("msg").innerHTML=ok?`<div class="thanks">Thank you${who?", "+who.replace(/[<>&]/g,""):""}!</div>${ok} photo${ok>1?"s":""} added${fail?` · ${fail} couldn't upload (photos must be images under 15 MB)`:""}`:"Sorry, those photos couldn't upload. Please try again.";
+ setTimeout(()=>$("prog").hidden=true,1500);load()};
+async function load(){const L=await rpc("vow_photos_list",{p:editing?pass:null}).catch(()=>[]);const g=$("grid");g.innerHTML="";$("empty").textContent=L.length?"":"No photos yet. Be the first!";
+ L.forEach(x=>{const d=document.createElement("div");d.className="ph"+(x.hidden?" hid":"");const im=document.createElement("img");im.loading="lazy";im.src=pub(x.path);im.alt="Photo"+(x.by?" from "+x.by:"");d.append(im);
+  if(x.by){const s=document.createElement("span");s.className="by";s.textContent=x.by;d.append(s)}
+  d.onclick=()=>{$("lbImg").src=pub(x.path);$("lbCap").textContent=x.by?"From "+x.by:"";$("lb").style.display="flex"};
+  if(editing){const b=document.createElement("button");b.textContent=x.hidden?"Unhide":"Hide";b.onclick=async ev=>{ev.stopPropagation();await rpc("vow_photo_hide",{p:pass,pid:x.id,h:!x.hidden});load()};d.append(b)}
+  g.append(d)})}
+$("lb").onclick=()=>$("lb").style.display="none";
+async function enter(){editing=true;$("passBox").hidden=true;$("editBtn").textContent="Done editing";load()}
+$("editBtn").onclick=async()=>{if(editing){editing=false;$("editBtn").textContent="Edit";return load()}if(pass&&await rpc("vow_seating_check",{p:pass}))return enter();$("passBox").hidden=false;$("passIn").focus()};
+$("passGo").onclick=async()=>{const p=$("passIn").value;if(await rpc("vow_seating_check",{p})){pass=p;localStorage.setItem("vowSeatPass",p);enter()}else $("passIn").value="",$("passIn").placeholder="Wrong passcode"};
+load();setInterval(()=>{if(!editing)load()},30000);
+</script></body></html>
