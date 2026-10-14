@@ -1,6 +1,7 @@
 // Floating photos button for every page of the vow site.
 (function(){
 var onPhotos=/photos\.html$/.test(location.pathname);
+if(onPhotos)return; // photos page has its own Camera/Gallery tabs
 var css=".vfab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9000;width:58px;height:58px;border-radius:50%;border:0;background:#b88996;color:#fff;font-size:1.6rem;line-height:58px;text-align:center;cursor:pointer;box-shadow:0 6px 18px rgba(61,51,54,.28);transition:transform .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent}"+
 ".vfab-glow{position:fixed;right:-16px;bottom:calc(-16px + env(safe-area-inset-bottom));width:122px;height:122px;border-radius:50%;z-index:8999;pointer-events:none;"+
 "background:radial-gradient(circle,rgba(255,170,205,.95) 0%,rgba(255,130,180,.7) 26%,rgba(250,120,170,.38) 46%,rgba(250,120,170,.12) 62%,rgba(250,120,170,0) 72%);filter:blur(7px);animation:vfabBreathe 3.4s ease-in-out infinite}"+
