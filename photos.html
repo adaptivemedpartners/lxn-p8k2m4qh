@@ -85,7 +85,7 @@ function picker(el,get,set){el.className="tp";el.innerHTML='<div class="chips"><
   opts.slice(0,40).forEach(g=>{const d=document.createElement("div");d.textContent=g;d.onmousedown=e=>{e.preventDefault();add(g)};dd.append(d)});
   if(q&&!GUESTS.some(g=>g.toLowerCase()===q)){const d=document.createElement("div");d.textContent='+ Add "'+inp.value.trim()+'"';d.onmousedown=e=>{e.preventDefault();add(inp.value.trim())};dd.append(d)}
   dd.hidden=!dd.children.length};
- const add=g=>{if(g&&!get().includes(g))set([...get(),g]);inp.value="";draw();dd.hidden=true;inp.blur()};
+ const add=g=>{if(g&&!get().includes(g))set([...get(),g]);inp.value="";draw();window.__pickT=Date.now();setTimeout(()=>dd.hidden=true,350);inp.blur()};
  inp.onfocus=show;inp.oninput=show;inp.onblur=()=>setTimeout(()=>dd.hidden=true,150);
  inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();const f=dd.querySelector("div");f&&f.onmousedown(e)}};
  const refresh=()=>{draw();if(document.activeElement===inp)show()};pickers.push(refresh);draw();return refresh}
@@ -124,7 +124,7 @@ $("gf").onchange=e=>{filt=e.target.value;load()};
 let lbSel=[];const lbRefresh=picker($("lbTags"),()=>lbSel,async v=>{lbSel=v;if(!cur)return;$("lbMsg").textContent="Saving tags…";
  try{await rpc("vow_photo_set_tags",{pid:cur.id,tags:v});cur.tags=v;$("lbMsg").textContent="Tags saved ✓";load()}catch(e){$("lbMsg").textContent="Couldn't save tags"}});
 let cur=null,shown=[];
-$("lb").onclick=e=>{if(e.target.id==="lb"||e.target.id==="lbX"||e.target.id==="lbImg")$("lb").style.display="none"};
+$("lb").onclick=e=>{if(Date.now()-(window.__pickT||0)<500)return;if(e.target.id==="lb"||e.target.id==="lbX"||e.target.id==="lbImg")$("lb").style.display="none"};
 $("lbDl").onclick=e=>{e.stopPropagation();cur&&download(cur)};
 const fname=x=>"Mike-Erica-Dec18-"+(x.by?x.by.replace(/[^A-Za-z0-9]+/g,"-")+"-":"")+x.id+"."+(x.path.split(".").pop()||"jpg");
 async function download(x){const url=pub(x.path),name=fname(x);
