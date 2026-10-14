@@ -124,7 +124,7 @@ $("gf").onchange=e=>{filt=e.target.value;load()};
 let lbSel=[];const lbRefresh=picker($("lbTags"),()=>lbSel,async v=>{lbSel=v;if(!cur)return;$("lbMsg").textContent="Saving tags…";
  try{await rpc("vow_photo_set_tags",{pid:cur.id,tags:v});cur.tags=v;$("lbMsg").textContent="Tags saved ✓";load()}catch(e){$("lbMsg").textContent="Couldn't save tags"}});
 let cur=null,shown=[];
-$("lb").onclick=e=>{if(Date.now()-(window.__pickT||0)<500)return;if(e.target.id==="lb"||e.target.id==="lbX"||e.target.id==="lbImg")$("lb").style.display="none"};
+$("lb").onclick=e=>{if(e.target.id!=="lbX"&&Date.now()-(window.__pickT||0)<500)return;if(e.target.id==="lb"||e.target.id==="lbX"||e.target.id==="lbImg")$("lb").style.display="none"};
 $("lbDl").onclick=e=>{e.stopPropagation();cur&&download(cur)};
 const fname=x=>"Mike-Erica-Dec18-"+(x.by?x.by.replace(/[^A-Za-z0-9]+/g,"-")+"-":"")+x.id+"."+(x.path.split(".").pop()||"jpg");
 async function download(x){const url=pub(x.path),name=fname(x);
