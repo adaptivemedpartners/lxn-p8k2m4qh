@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Airport Transfers · December 18</title><meta name="robots" content="noindex"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--blush:#f6e8ec;--rose:#d4b0ba;--dusty:#b88996;--ink:#3d3336;--muted:#7a6a6e;--cream:#fbf7f2;--gold:#b8a07a;--card:#fffdfb;--line:rgba(184,160,122,.35)}
+*{box-sizing:border-box}body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:linear-gradient(var(--cream),var(--blush));min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+h1{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(2.4rem,9vw,3.4rem);text-align:center;margin:8px 0 0;color:var(--dusty)}
+.sub{text-align:center;font-family:"Cormorant Garamond",serif;font-size:1.2rem;color:var(--muted);margin:0 0 16px}
+a.back{color:var(--dusty);font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:0 0 14px}
+.card h2{font-family:"Cormorant Garamond",serif;font-weight:600;margin:0 0 10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-size:.9rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+label{display:block;font-size:.8rem;color:var(--muted);font-weight:600}
+input,textarea{width:100%;font:inherit;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);margin-top:3px}
+input:focus,textarea:focus{outline:none;border-color:var(--dusty)}
+button{font:inherit;border:1px solid var(--gold);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 16px;cursor:pointer}
+button.pri{background:var(--dusty);border-color:var(--dusty);color:#fff}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tabs button{padding:5px 12px;font-size:.85rem}.tabs button.on{background:var(--dusty);color:#fff;border-color:var(--dusty)}
+.items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.it{display:flex;justify-content:space-between;align-items:center;gap:6px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#fff}
+.it .n{font-weight:600;font-size:.9rem}.it .s{font-size:.75rem;color:var(--muted)}
+.step{display:flex;align-items:center;gap:4px;flex:none}.step button{padding:2px 10px}.step span{min-width:20px;text-align:center;font-weight:700}
+.it.has{border-color:var(--dusty);background:var(--blush)}
+.total{text-align:right;font-family:"Cormorant Garamond",serif;font-size:1.3rem;margin-top:10px}
+.status{text-align:center;font-size:.9rem;color:var(--muted);min-height:1.3em;margin:8px 0}
+.bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.note{font-size:.8rem;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}td,th{border-bottom:1px solid var(--line);padding:5px;text-align:left;vertical-align:top}
+@media(max-width:560px){.grid,.grid3,.items{grid-template-columns:1fr}}
+@media print{.bar,.status,a.back,#guest,#passBox,.noprint{display:none!important}body{background:#fff}.card{break-inside:avoid}}
+</style></head><body><div class="wrap">
+<a class="back" href="./">← Back to the guest page</a>
+<h1>Airport Transfers</h1><p class="sub">Mike &amp; Erica · December 18 · Canada Transfers group request</p>
+<div id="guest">
+<div class="card"><p style="margin:0">Please fill this out once per travel party. We’ll send everyone’s flights together to Canada Transfers to ask for a group rate. <b>Nothing is booked or charged here.</b> You can come back on this device to update your answers.</p></div>
+<form id="f" autocomplete="on">
+<div class="card"><h2>Your party</h2><div class="grid3">
+<div><label>Party name *<input name="party_name" required maxlength="120" placeholder="e.g. The Smith family"></label></div>
+<div><label>Email<input name="contact_email" type="email" maxlength="160"></label></div>
+<div><label>Phone<input name="contact_phone" type="tel" maxlength="40"></label></div></div>
+<div class="grid" style="margin-top:10px"><div><label>Adults<input name="adults" type="number" min="0" max="50" value="1"></label></div><div><label>Children<input name="children" type="number" min="0" max="50" value="0"></label></div></div></div>
+<div class="card"><h2>Arrival flight (into Cancún)</h2><div class="grid3">
+<div><label>Airline<input name="arr_airline" maxlength="80"></label></div><div><label>Flight number<input name="arr_flight" maxlength="20"></label></div><div><label>Arrival date &amp; time<input name="arr_at" type="datetime-local"></label></div></div></div>
+<div class="card"><h2>Departure flight (out of Cancún)</h2><div class="grid3">
+<div><label>Airline<input name="dep_airline" maxlength="80"></label></div><div><label>Flight number<input name="dep_flight" maxlength="20"></label></div><div><label>Departure date &amp; time<input name="dep_at" type="datetime-local"></label></div></div></div>
+<div class="card"><h2>On-board extras (optional)</h2><p class="note" style="margin-top:0">Same menu and USD prices as Canada Transfers’ “Add Options / Extras” step.</p>
+<div class="tabs" id="tabs"></div><div class="items" id="items"></div>
+<div class="total">Your extras subtotal: <b id="sub">$0.00</b> USD</div></div>
+<div class="card"><h2>Anything else?</h2><textarea name="notes" rows="2" maxlength="1000" placeholder="Luggage, accessibility, hotel, etc."></textarea></div>
+<div class="bar"><button class="pri" type="submit" id="saveBtn">Save my party</button></div>
+</form></div>
+<div class="status" id="status"></div>
+<div class="bar noprint"><button id="orgBtn" type="button">Organizer view</button></div>
+<div id="passBox" hidden style="text-align:center;margin:0 0 12px"><input id="passIn" type="password" placeholder="Organizer passcode" style="width:200px;border-radius:999px;border:2px solid var(--dusty)"> <button class="pri" id="passGo">Unlock</button></div>
+<div id="org" hidden>
+<div class="bar"><button class="pri" id="copyBtn">Copy all as text</button><button id="csvBtn">Download CSV</button><button id="pdfBtn">Download PDF / Print</button><button id="refBtn">Refresh</button></div>
+<div id="orgOut"></div></div>
+</div>
+<script>
+const MENU=[{"tab": "Drinks", "items": [{"id": 36, "name": "Coke", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 37, "name": "Diet Coke", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 38, "name": "Coke Zero", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 39, "name": "Pepsi", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 40, "name": "Pepsi Light", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 41, "name": "Sprite", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 42, "name": "Dr Pepper", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 43, "name": "Fanta", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 45, "name": "Lemonade Peñafiel", "size": "600ml (20.29oz)", "price": 2.0}, {"id": 47, "name": "Arizona drinks & teas", "size": "680ml (22.99oz)", "price": 2.0}, {"id": 81, "name": "Del Valle Juice", "size": "413ml (13.97oz)", "price": 2.0}, {"id": 82, "name": "Pulpy Orange", "size": "400ml (13.53oz)", "price": 2.0}, {"id": 94, "name": "Cool Coffe", "size": "281ml (9.50oz)", "price": 4.0}, {"id": 97, "name": "Gatorade Fiece", "size": "750ml (25.36oz)", "price": 2.0}, {"id": 98, "name": "Gatorade Orange", "size": "750ml (25.36oz)", "price": 2.0}, {"id": 114, "name": "RedBull", "size": "250ml (8.45oz)", "price": 3.0}, {"id": 138, "name": "MONSTER ENERGY", "size": "473ml (15.99oz)", "price": 3.0}, {"id": 139, "name": "MONSTER ZERO ULTRA", "size": "473ml (15.99oz)", "price": 3.0}, {"id": 140, "name": "RED BULL (sugar free)", "size": "250ml (8.45oz)", "price": 3.0}, {"id": 145, "name": "CHOCOLATE FLAVOR DRINK", "size": "190ml (6.42oz)", "price": 1.0}, {"id": 146, "name": "Children's Sand Toy Set 13 Pcs", "size": "", "price": 12.0}]}, {"tab": "Snacks", "items": [{"id": 91, "name": "Hot-Nuts", "size": "100ml (3.38oz)", "price": 3.0}, {"id": 92, "name": "Pringles Cheese", "size": "137ml (4.63oz)", "price": 5.0}, {"id": 115, "name": "Hershey's (Almonds)", "size": "38ml (1.28oz)", "price": 2.0}, {"id": 116, "name": "Hershey's (Cookies n Cream)", "size": "43ml (1.45oz)", "price": 3.0}, {"id": 117, "name": "Hershey's (Milk Chocolate)", "size": "40ml (1.35oz)", "price": 2.0}]}, {"tab": "Beer", "items": [{"id": 48, "name": "Corona", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 49, "name": "Corona Light", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 53, "name": "Modelo", "size": "355ml (12.00oz)", "price": 2.0}, {"id": 137, "name": "NEGRA MODELO", "size": "355ml (12.00oz)", "price": 2.0}]}, {"tab": "Wines and Liqueurs", "items": [{"id": 63, "name": "Caribe Cooler", "size": "300ml (10.14oz)", "price": 2.0}, {"id": 66, "name": "Vodka Skyy", "size": "275ml (9.30oz)", "price": 3.0}, {"id": 70, "name": "Absolut Vodka.", "size": "750ml (25.36oz)", "price": 26.0}, {"id": 76, "name": "Sparkling Wine Andre Brut", "size": "750ml (25.36oz)", "price": 21.0}, {"id": 77, "name": "Sparkling Wine Andre Rose", "size": "750ml (25.36oz)", "price": 21.0}, {"id": 83, "name": "El Jimador Reposado (Aged)", "size": "700ml (23.67oz)", "price": 21.0}, {"id": 86, "name": "Merlot 120 Santa Rita", "size": "750ml (25.36oz)", "price": 16.0}, {"id": 87, "name": "Alma Mora Pinot Grigio", "size": "750ml (25.36oz)", "price": 16.0}, {"id": 88, "name": "Tequila Corralejo Reposado (Aged)", "size": "700ml (23.67oz)", "price": 40.0}, {"id": 89, "name": "Tequila Don Ramón Reposado (Aged)", "size": "750ml (25.36oz)", "price": 21.0}, {"id": 103, "name": "Martini Asti D.O.C.G. 1863", "size": "750ml (25.36oz)", "price": 45.0}, {"id": 104, "name": "Alma Mora Gabernet Sauvignon (Red wine)", "size": "750ml (25.36oz)", "price": 16.0}, {"id": 135, "name": "CONO SUR MERLOT (Red wine)", "size": "750ml (25.36oz)", "price": 22.0}, {"id": 143, "name": "120 (CABERNET SAUVIGNON)", "size": "750ml (25.36oz)", "price": 16.0}, {"id": 144, "name": "Tequila and Grapefruit Drink", "size": "350ml (11.83oz)", "price": 2.0}]}, {"tab": "Sun Block", "items": [{"id": 72, "name": "SunBlock SPF 45 biodegradable 5 OZ", "size": "", "price": 12.0}, {"id": 73, "name": "AfterSun Skin Care 5 OZ", "size": "", "price": 12.0}, {"id": 74, "name": "Insect Repellent", "size": "", "price": 8.0}]}, {"tab": "Child Seat", "items": [{"id": 132, "name": "Child Seat", "size": "", "price": 0.0}, {"id": 133, "name": "Baby Seat", "size": "", "price": 0.0}, {"id": 134, "name": "Booster Seat", "size": "", "price": 0.0}]}, {"tab": "Box Food", "items": [{"id": 110, "name": "BOX Lunch with snacks", "size": "", "price": 10.0}, {"id": 118, "name": "Ferry Round Trip Adults", "size": "", "price": 35.0}, {"id": 119, "name": "Ferry Round Trip child", "size": "", "price": 26.0}, {"id": 121, "name": "Handmade organic cigars", "size": "", "price": 8.0}]}];
+const URL_="https://pmbehaioxviyhdmmczfl.supabase.co/rest/v1/rpc/",KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtYmVoYWlveHZpeWhkbW1jemZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxODg4NjAsImV4cCI6MjEwMjc2NDg2MH0.H6u8tZ3lnkeOOfK1bwlQ5OIKkNbLpAmfi7NykSE_vIE";
+const rpc=(f,b)=>fetch(URL_+f,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify(b||{})}).then(async r=>{if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||r.status);const t=await r.text();return t?JSON.parse(t):null});
+const $=id=>document.getElementById(id),st=m=>$("status").textContent=m,money=n=>"$"+n.toFixed(2);
+const ITEM={};MENU.forEach(t=>t.items.forEach(i=>ITEM[i.id]={...i,tab:t.tab}));
+let tok=localStorage.getItem("vowTransferTok");if(!tok){tok=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now())+"-"+Math.random().toString(36).slice(2);localStorage.setItem("vowTransferTok",tok)}
+let qty={},tab=MENU[0].tab,pass=localStorage.getItem("vowSeatPass")||"",rows=[];
+function drawTabs(){$("tabs").innerHTML="";MENU.forEach(t=>{const b=document.createElement("button");b.type="button";const c=t.items.reduce((s,i)=>s+(qty[i.id]||0),0);b.textContent=t.tab+(c?` (${c})`:"");b.className=t.tab==tab?"on":"";b.onclick=()=>{tab=t.tab;draw()};$("tabs").append(b)})}
+function draw(){drawTabs();const T=MENU.find(t=>t.tab==tab);$("items").innerHTML="";T.items.forEach(i=>{const q=qty[i.id]||0,d=document.createElement("div");d.className="it"+(q?" has":"");
+ d.innerHTML=`<div><div class="n"></div><div class="s"></div></div><div class="step"><button type="button" aria-label="minus">−</button><span>${q}</span><button type="button" aria-label="plus">+</button></div>`;
+ d.querySelector(".n").textContent=i.name+(i.price?` (${money(i.price)} usd each)`:"");d.querySelector(".s").textContent=i.price?i.size:(i.size?i.size+" · ":"")+"No price listed on Canada Transfers menu";
+ const [m,p]=d.querySelectorAll("button");m.onclick=()=>{qty[i.id]=Math.max(0,q-1);if(!qty[i.id])delete qty[i.id];draw()};p.onclick=()=>{qty[i.id]=Math.min(99,q+1);draw()};$("items").append(d)});
+ $("sub").textContent=money(sub(qty))}
+const sub=q=>Object.entries(q).reduce((s,[k,v])=>s+(ITEM[k]?ITEM[k].price*v:0),0);
+$("f").onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData($("f")));d.adults=+d.adults||0;d.children=+d.children||0;d.extras=qty;$("saveBtn").disabled=true;st("Saving…");
+ try{await rpc("vow_transfer_save",{tok,d});st("Saved ✓ Thank you! You can update this anytime from this device.")}catch(err){st("Save failed: "+err.message)}$("saveBtn").disabled=false};
+rpc("vow_transfer_mine",{tok}).then(r=>{if(!r)return;for(const el of $("f").elements)if(el.name&&r[el.name]!=null)el.value=r[el.name];qty=r.extras||{};draw();st("Loaded your saved answers. Edit and save again to update.")}).catch(()=>{});
+draw();
+/* organizer */
+const fmtDT=s=>s?s.replace("T"," "):"—";
+function extrasLines(x){return Object.entries(x||{}).filter(([k])=>ITEM[k]).map(([k,v])=>({tab:ITEM[k].tab,name:ITEM[k].name,size:ITEM[k].size,price:ITEM[k].price,q:v}))}
+function totals(){const t={parties:rows.length,adults:0,children:0,ex:{},amt:0};rows.forEach(r=>{t.adults+=r.adults;t.children+=r.children;extrasLines(r.extras).forEach(e=>{t.ex[e.name]=(t.ex[e.name]||{q:0,price:e.price});t.ex[e.name].q+=e.q;t.amt+=e.q*e.price})});return t}
+function asText(){let o="Canada Transfers group request: Mike & Erica vow renewal, December 18, Cancún\n\n";
+ rows.forEach((r,n)=>{o+=`PARTY ${n+1}: ${r.party_name}\nContact: ${[r.contact_email,r.contact_phone].filter(Boolean).join(" · ")||"—"}\nPassengers: ${r.adults} adult(s), ${r.children} child(ren)\nArrival: ${r.arr_airline||"—"} ${r.arr_flight||""}, ${fmtDT(r.arr_at)}\nDeparture: ${r.dep_airline||"—"} ${r.dep_flight||""}, ${fmtDT(r.dep_at)}\n`;
+  const ex=extrasLines(r.extras);o+=ex.length?"Extras:\n"+ex.map(e=>`  - ${e.q} × ${e.name}${e.size?" ("+e.size+")":""} @ ${money(e.price)} = ${money(e.q*e.price)}`).join("\n")+`\n  Extras subtotal: ${money(sub(r.extras))} USD\n`:"Extras: none\n";if(r.notes)o+=`Notes: ${r.notes}\n`;o+="\n"});
+ const t=totals();o+=`GRAND TOTALS\nParties: ${t.parties}\nAdults: ${t.adults}\nChildren: ${t.children}\nTotal passengers: ${t.adults+t.children}\n`;
+ const ek=Object.keys(t.ex);o+=ek.length?"Extras:\n"+ek.map(k=>`  - ${t.ex[k].q} × ${k} = ${money(t.ex[k].q*t.ex[k].price)}`).join("\n")+`\nExtras grand total: ${money(t.amt)} USD\n`:"Extras: none\n";return o}
+function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function drawOrg(){const t=totals();let h=`<div class="card"><h2>Summary</h2><b>${t.parties}</b> parties · <b>${t.adults}</b> adults · <b>${t.children}</b> children · extras <b>${money(t.amt)}</b> USD</div>`;
+ rows.forEach((r,n)=>{const ex=extrasLines(r.extras);h+=`<div class="card"><h2>${n+1}. ${esc(r.party_name)}</h2><div class="note">${esc([r.contact_email,r.contact_phone].filter(Boolean).join(" · "))}</div>
+ <table><tr><th>Passengers</th><td>${r.adults} adults, ${r.children} children</td></tr><tr><th>Arrival</th><td>${esc(r.arr_airline)} ${esc(r.arr_flight)} · ${esc(fmtDT(r.arr_at))}</td></tr><tr><th>Departure</th><td>${esc(r.dep_airline)} ${esc(r.dep_flight)} · ${esc(fmtDT(r.dep_at))}</td></tr>
+ <tr><th>Extras</th><td>${ex.length?ex.map(e=>`${e.q} × ${esc(e.name)} = ${money(e.q*e.price)}`).join("<br>")+`<br><b>Subtotal ${money(sub(r.extras))}</b>`:"none"}</td></tr>${r.notes?`<tr><th>Notes</th><td>${esc(r.notes)}</td></tr>`:""}</table></div>`});
+ const ek=Object.keys(t.ex);h+=`<div class="card"><h2>Grand totals</h2><table><tr><th>Adults</th><td>${t.adults}</td></tr><tr><th>Children</th><td>${t.children}</td></tr>${ek.map(k=>`<tr><th>${esc(k)}</th><td>${t.ex[k].q} (${money(t.ex[k].q*t.ex[k].price)})</td></tr>`).join("")}<tr><th>Extras total</th><td><b>${money(t.amt)} USD</b></td></tr></table></div>`;
+ $("orgOut").innerHTML=h}
+async function loadOrg(){try{rows=await rpc("vow_transfer_list",{p:pass});drawOrg();st(rows.length+" parties loaded")}catch(e){st("Couldn't load: "+e.message)}}
+async function enterOrg(){$("passBox").hidden=true;$("org").hidden=false;$("guest").hidden=true;$("orgBtn").textContent="Back to form";history.replaceState(null,"","#organizer");await loadOrg()}
+$("orgBtn").onclick=async()=>{if(!$("org").hidden){$("org").hidden=true;$("guest").hidden=false;$("orgBtn").textContent="Organizer view";history.replaceState(null,"",location.pathname);st("");return}
+ if(pass&&await rpc("vow_seating_check",{p:pass}))return enterOrg();pass="";$("passBox").hidden=false;$("passIn").focus();st("Organizer passcode (same as the seating edit passcode)")};
+$("passGo").onclick=async()=>{const p=$("passIn").value;if(await rpc("vow_seating_check",{p})){pass=p;localStorage.setItem("vowSeatPass",p);enterOrg()}else st("Wrong passcode")};
+$("passIn").onkeydown=e=>{if(e.key==="Enter")$("passGo").click()};
+$("refBtn").onclick=loadOrg;$("pdfBtn").onclick=()=>window.print();
+$("copyBtn").onclick=()=>{const t=asText();navigator.clipboard?.writeText(t).then(()=>st("Copied ✓ Paste it into an email"),()=>prompt("Copy:",t))};
+$("csvBtn").onclick=()=>{const ids=Object.keys(ITEM).filter(k=>rows.some(r=>(r.extras||{})[k]));const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+ const head=["Party","Email","Phone","Adults","Children","Arrival airline","Arrival flight","Arrival date/time","Departure airline","Departure flight","Departure date/time",...ids.map(k=>ITEM[k].tab+": "+ITEM[k].name+" ($"+ITEM[k].price.toFixed(2)+")"),"Extras subtotal USD","Notes"];
+ const lines=[head.map(q).join(",")].concat(rows.map(r=>[r.party_name,r.contact_email,r.contact_phone,r.adults,r.children,r.arr_airline,r.arr_flight,r.arr_at,r.dep_airline,r.dep_flight,r.dep_at,...ids.map(k=>(r.extras||{})[k]||0),sub(r.extras).toFixed(2),r.notes].map(q).join(",")));
+ const t=totals();lines.push(["TOTAL","","",t.adults,t.children,"","","","","","",...ids.map(k=>rows.reduce((s,r)=>s+((r.extras||{})[k]||0),0)),t.amt.toFixed(2),""].map(q).join(","));
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+lines.join("\r\n")],{type:"text/csv"}));a.download="canada-transfers-group.csv";a.click()};
+if(location.hash=="#organizer"){if(pass)rpc("vow_seating_check",{p:pass}).then(ok=>ok?enterOrg():$("orgBtn").click());else $("orgBtn").click()}
+</script><script src="assets/photo-fab.js"></script>
+</body></html>
